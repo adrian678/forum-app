@@ -1,0 +1,22 @@
+
+Bounded Context stuff
+- decide between the name TopicBoard or Group
+-
+
+
+- add final keyword to all entities with value object IDs
+
+- learn the normal implementations of UserDetails, Granted Authorities, and Roles
+
+- add REST controllers for entities.
+    controller methods should output ResponseEntities
+    ResponseEntities should have status codes
+    ResponseEntities should have caching set: ETag, lastModified
+    ResponseEntities should headers for the content type they accept (or use Producer/Consumer annotations)
+
+- Add an authorization endpoint
+
+- Add a filter for jwt's
+
+- add filter/query options for REST controller methods
+

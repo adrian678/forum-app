@@ -1,0 +1,5 @@
+FROM maven:3.6.3-jdk-8
+COPY ./src .
+RUN mvn clean install
+EXPOSE 8081
+

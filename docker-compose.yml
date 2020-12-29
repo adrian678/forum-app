@@ -1,0 +1,9 @@
+services:
+  backend:
+
+  mysql:
+    image: "mysql"
+    environment:
+      - MYSQL_USER=docker
+      - MYSQL_PASSWORD=docker
+      - MYSQL_DATABASE=forum
