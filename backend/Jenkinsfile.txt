@@ -7,7 +7,10 @@ pipeline {
             steps {
 				echo 'Building..'
                 sh 'mvn --version'
-				sh 'mvn clean install'
+                dir("./backend/){
+                    sh 'mvn clean install'
+                }
+				
             }
         }
     }

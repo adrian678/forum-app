@@ -20,3 +20,6 @@ Bounded Context stuff
 
 - add filter/query options for REST controller methods
 
+-Figure out how to change Jenking builds to run once/week or once/commit
+
+- Figure out how to get more descriptive output from Jenkins build
