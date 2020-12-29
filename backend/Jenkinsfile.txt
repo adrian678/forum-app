@@ -9,6 +9,8 @@ pipeline {
                 sh 'mvn --version'
                 dir("./backend/){
                     sh 'mvn clean install'
+                    sh 'mvn package'
+                    echo 'Finished building bananas'
                 }
 				
             }
