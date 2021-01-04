@@ -23,3 +23,8 @@ Bounded Context stuff
 -Figure out how to change Jenking builds to run once/week or once/commit
 
 - Figure out how to get more descriptive output from Jenkins build
+
+- Decide whether Posts or Boards have ownership of active posts.
+    do Boards maintain a list of active Posts, or does a service act on the Posts, marking them as inactive/archived?
+
+- Learn the DDD methodology for dealing with Many to Many relationships

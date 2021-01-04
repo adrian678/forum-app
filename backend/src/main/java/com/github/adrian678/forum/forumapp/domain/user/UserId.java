@@ -16,8 +16,16 @@ public class UserId implements Serializable {
         this.uId = uuid;
     }
 
+    public UserId(UserId userId){
+        this.uId = UUID.fromString(userId.stringify());
+    }
+
     public static UserId of(String s){
         return new UserId(UUID.fromString(s));
+    }
+
+    public String stringify(){
+        return uId.toString();
     }
 
     @Override
