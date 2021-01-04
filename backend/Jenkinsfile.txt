@@ -1,6 +1,7 @@
 pipeline {
-    agent {image 'maven'}
-    
+    agent {
+        dokcer { image 'maven'}
+    }
     stages {
         stage('Build') {
             steps {
