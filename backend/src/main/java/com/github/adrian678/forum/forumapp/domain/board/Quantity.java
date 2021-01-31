@@ -1,8 +1,7 @@
 package com.github.adrian678.forum.forumapp.domain.board;
 
-import javax.persistence.Embeddable;
 
-@Embeddable
+
 public class Quantity {
     private final int quantity;
 

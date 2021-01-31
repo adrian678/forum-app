@@ -1,38 +1,38 @@
 package com.github.adrian678.forum.forumapp.domain.user;
 
-import javax.persistence.Embeddable;
 import java.io.Serializable;
 import java.util.UUID;
 
-@Embeddable
 public class UserId implements Serializable {
-    private final UUID uId;
+    private final UUID uuid;
 
-    public UserId(){
-        this.uId = UUID.randomUUID();
-    }
-
-    private UserId(UUID uuid){
-        this.uId = uuid;
-    }
-
-    public UserId(UserId userId){
-        this.uId = UUID.fromString(userId.stringify());
+    public UserId(UUID uuid){
+        this.uuid = uuid;
     }
 
     public static UserId of(String s){
         return new UserId(UUID.fromString(s));
     }
 
-    public String stringify(){
-        return uId.toString();
+    public UserId copy(){
+        return new UserId(uuid);
+    }
+
+    public static UserId getInstance(){
+        return new UserId(UUID.randomUUID());
+    }
+
+    public String toString(){
+        return uuid.toString();
     }
 
     @Override
     public boolean equals(Object obj) {
         if(obj instanceof UserId){
-            return uId.equals(((UserId) obj).uId);
+            return uuid.equals(((UserId) obj).uuid);
         }
         return false;
     }
+
+    //TODO make a hash method
 }

@@ -1,26 +1,25 @@
 package com.github.adrian678.forum.forumapp.domain.comment;
 
 import com.github.adrian678.forum.forumapp.domain.post.Post;
+import com.github.adrian678.forum.forumapp.domain.post.PostId;
 import com.github.adrian678.forum.forumapp.domain.user.UserId;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.lang.NonNull;
 
-import javax.persistence.*;
-import java.sql.Date;
+import java.util.Date;
 
-@Entity
+@Document
 public class Comment {
 
-    @EmbeddedId
+    @Id
     @NonNull
     private CommentId cid;
-    @JoinColumn //TODO check if query for a Comment returns the Post as well
-    @ManyToOne(cascade = CascadeType.ALL)
-    private Post parentPost;
 
-    @ManyToOne(cascade = CascadeType.ALL) //TODO check correct cascade type?
-    @JoinColumn
-    private Comment parentComment;
-    @JoinColumn     //TODO if I use join columns, am I now placing a burden on the ORM mapper?
+    private PostId parentPost;
+
+    private CommentId parentComment;
+
     UserId author;
     @NonNull
     String content;
@@ -29,20 +28,23 @@ public class Comment {
     @NonNull
     private int points;
 
-    public Comment(Post parentPost, Comment parentComment, UserId author, String content){
-        this.points = 1;
-        this.timestamp = new Date(System.currentTimeMillis());
+    private Comment(CommentId cid, PostId parentPost, CommentId parentComment, UserId author, String content, Date timestamp, int points){
+        this.cid = cid;
         this.parentPost = parentPost;
         this.parentComment = parentComment;
         this.author = author;
         this.content = content;
+        this.timestamp = new Date(timestamp.getTime());
+        this.points = points;
     }
 
-    public Post getParentPost(){
+    //TODO create factory method
+
+    public PostId getParentPost(){
         return parentPost;
     }
 
-    public Comment getParentComment(){
+    public CommentId getParentComment(){
         return parentComment;
     }
 

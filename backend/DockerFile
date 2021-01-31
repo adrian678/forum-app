@@ -1,5 +1,7 @@
-FROM maven:3.6.3-jdk-8
-COPY ./src .
-RUN mvn clean install
+FROM maven:3.6.3-jdk-8-slim
+COPY ./ ./
+RUN mvn clean package
+CMD ["java", "-jar", "target/forum.jar"]
 EXPOSE 8081
+
 

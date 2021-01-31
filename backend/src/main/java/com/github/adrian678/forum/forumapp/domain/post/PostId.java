@@ -1,14 +1,17 @@
 package com.github.adrian678.forum.forumapp.domain.post;
 
-import javax.persistence.Embeddable;
 import java.io.Serializable;
 import java.util.UUID;
 
-@Embeddable
+
 public class PostId implements Serializable {
     private UUID pId;
     public PostId(){
         this.pId = UUID.randomUUID();
+    }
+
+    public PostId(String id){
+        pId = UUID.fromString(id);
     }
 
     public UUID getId(){

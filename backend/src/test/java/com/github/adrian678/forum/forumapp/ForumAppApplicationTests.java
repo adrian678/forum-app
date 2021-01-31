@@ -8,6 +8,7 @@ class ForumAppApplicationTests {
 
 	@Test
 	void contextLoads() {
+		assert(true);
 	}
 
 }

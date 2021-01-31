@@ -1,21 +1,23 @@
 package com.github.adrian678.forum.forumapp.domain.post;
 
-import com.github.adrian678.forum.forumapp.domain.user.User;
+import com.github.adrian678.forum.forumapp.domain.board.BoardId;
+import com.github.adrian678.forum.forumapp.domain.user.UserId;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.lang.NonNull;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import java.sql.Date;
+import java.util.Date;
 
-@Entity
+
+@Document
 public class Post {
-//    @Id
-//    @NonNull
-//    private final PostId pid;            //TODO must add Topic/Group before can finish this class
+    @Id
     @NonNull
-    private User author;
+    private PostId pId;            //TODO must add Topic/Group before can finish this class
+    @NonNull
+    private BoardId boardId;
+    @NonNull
+    private UserId author;
     @NonNull
     private String content;
     @NonNull
@@ -24,32 +26,38 @@ public class Post {
     private int points;                 //TODO decide if points should be a value object
     @NonNull
     private Date timestamp;
-    @ManyToOne
-//    @JoinColumn
-//    @NonNull
-//    private Group group;    //TODO should a post have multiple topics or just one?
+    @NonNull
+    private boolean archived;
 
-//    public Post(User author, String title, String content, Group group){
-//        this.pid = new PostId();
-//        this.points = PointsCount.of(1);
-//        this.author = author;
-//        this.title=title;
-//        this.content = content;
-//        this.group = group;
-//        this.timestamp = new Date(System.currentTimeMillis());
-//    }
+    private Post(PostId postId, UserId author, BoardId boardId, int points, String title, String content, Date createdAt){
+        this.pId = postId;
+        this.boardId = boardId;
+        this.points = points;
+        this.author = author;
+        this.title = title;
+        this.content = content;
+        this.timestamp = new Date(createdAt.getTime());
+    }
 
 
-//    public PostId getPid() {
-//        return pid;
-//    }
+    public PostId getpId() {
+        return pId;
+    }
 
-    public User getAuthor() {
+    public UserId getAuthor() {
         return author;
+    }
+
+    public BoardId getBoardId(){
+        return boardId;
     }
 
     public String getContent() {
         return content;
+    }
+
+    public static Post createPost(UserId author, BoardId boardId, String title, String content){
+        return new Post(new PostId(), author, boardId, 1, title, content, new Date(System.currentTimeMillis()));
     }
 
     public int getPoints() {
@@ -74,6 +82,11 @@ public class Post {
 
     public Date getTimestamp() {
         return timestamp;
+    }
+
+    public void archive(){
+//        TODO should there be a method to 'unarchive' a Post?
+        this.archived = true;
     }
 
 
