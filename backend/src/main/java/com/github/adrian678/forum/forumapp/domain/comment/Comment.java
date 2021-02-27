@@ -1,13 +1,12 @@
 package com.github.adrian678.forum.forumapp.domain.comment;
 
-import com.github.adrian678.forum.forumapp.domain.post.Post;
 import com.github.adrian678.forum.forumapp.domain.post.PostId;
 import com.github.adrian678.forum.forumapp.domain.user.UserId;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.lang.NonNull;
 
-import java.util.Date;
+import java.time.Instant;
 
 @Document
 public class Comment {
@@ -16,36 +15,43 @@ public class Comment {
     @NonNull
     private CommentId cid;
 
-    private PostId parentPost;
+    private PostId parentPostId;
 
-    private CommentId parentComment;
+    private CommentId parentCommentId;
 
     UserId author;
     @NonNull
     String content;
     @NonNull
-    private Date timestamp;
+    private Instant createdAt; //TODO change to Instant from Java 8 DateTIme api
     @NonNull
     private int points;
 
-    private Comment(CommentId cid, PostId parentPost, CommentId parentComment, UserId author, String content, Date timestamp, int points){
+    private Comment(CommentId cid, PostId parentPostId, CommentId parentComment, UserId author, String content, Instant createdAt, int points){
         this.cid = cid;
-        this.parentPost = parentPost;
-        this.parentComment = parentComment;
+        this.parentPostId = parentPostId;
+        this.parentCommentId = parentComment;
         this.author = author;
         this.content = content;
-        this.timestamp = new Date(timestamp.getTime());
+        this.createdAt = createdAt;
         this.points = points;
     }
 
     //TODO create factory method
-
-    public PostId getParentPost(){
-        return parentPost;
+    public static Comment create(PostId postId, CommentId parentComment, UserId author, String content){
+        return new Comment(CommentId.randomId(), postId, parentComment, author, content, Instant.now(), 1);
     }
 
-    public CommentId getParentComment(){
-        return parentComment;
+    public PostId getParentPostId(){
+        return parentPostId;
+    }
+
+    public CommentId getCid(){
+        return cid;
+    }
+
+    public CommentId getParentCommentId(){
+        return parentCommentId;
     }
 
     public UserId getAuthor() {
@@ -60,8 +66,8 @@ public class Comment {
         this.content = content;
     }
 
-    public Date getTimestamp() {
-        return timestamp;
+    public Instant createdAt() {
+        return createdAt;
     }
 
     public int getPoints() {

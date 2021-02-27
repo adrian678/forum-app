@@ -6,7 +6,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.lang.NonNull;
 
-import java.util.Date;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -22,7 +22,7 @@ public class Board {
     @NonNull
     private Quantity numSubscribers;
     @NonNull
-    public final Date creationDate;
+    public final Instant createdAt;
     @NonNull
     private UserId owner;
 
@@ -33,19 +33,19 @@ public class Board {
     private List<PostId> pinnedPosts;
 
     private Board(String topic, String description, UserId owner, Quantity numSubscribers,
-                    Date creationDate, List<UserId> moderators, List<String > rules, List<PostId> pinnedPosts){
+                    Instant createdAt, List<UserId> moderators, List<String > rules, List<PostId> pinnedPosts){
         this.topic = topic;
         this.description = description;
         this.owner = owner;
         this.numSubscribers = numSubscribers;
-        this.creationDate = new Date(creationDate.getTime()); //TODO is defensive programming necessary here and below?
+        this.createdAt =  createdAt;//new Date(createdAt.getTime()); //TODO is defensive programming necessary here and below?
         this.moderators = new ArrayList<>(moderators);
         this.rules = new ArrayList<>(rules);
-        this.pinnedPosts = new ArrayList<>(pinnedPosts); //TODO need to set pinned Posts instead of creating new ones
+        this.pinnedPosts = new ArrayList<>(pinnedPosts); //TODO need to set pinned Posts instead fromString creating new ones
     }
 
     public static Board createNewBoard(String topic, String description, UserId owner, List<String> rules){
-        return new Board(topic, description, owner, Quantity.of(1), new Date(System.currentTimeMillis()), new ArrayList<UserId>(), rules, new ArrayList<>());
+        return new Board(topic, description, owner, Quantity.of(1), Instant.now(), new ArrayList<UserId>(), rules, new ArrayList<>());
     }
 
     public void rename(String newName){
@@ -60,4 +60,31 @@ public class Board {
         pinnedPosts.add(postId);
     }
 
+    public String getTopic() {
+        return topic;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public Quantity getNumSubscribers() {
+        return numSubscribers;
+    }
+
+    public Instant getCreatedAt() {
+        return createdAt;
+    }
+
+    public UserId getOwner() {
+        return owner;
+    }
+
+    public List<String> getRules() {
+        return rules;
+    }
+
+    public List<PostId> getPinnedPosts() {
+        return pinnedPosts;
+    }
 }

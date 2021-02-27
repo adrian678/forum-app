@@ -5,23 +5,28 @@ import java.util.UUID;
 
 
 public class PostId implements Serializable {
-    private UUID pId;
-    public PostId(){
-        this.pId = UUID.randomUUID();
+    private UUID uuid;
+
+    private PostId(UUID uuid){
+        this.uuid = uuid;
     }
 
-    public PostId(String id){
-        pId = UUID.fromString(id);
+    public static PostId randomId(){
+        return new PostId(UUID.randomUUID());
+    }
+    public static PostId fromString(String s){
+        return new PostId(UUID.fromString(s));
     }
 
-    public UUID getId(){
-        return pId;
+    public UUID getUuid(){
+        return uuid;
     }
+
 
     @Override
     public boolean equals(Object obj) {
         if(obj instanceof PostId){
-            return pId.equals(((PostId) obj).pId);
+            return uuid.equals(((PostId) obj).uuid);
         }
         return false;
     }

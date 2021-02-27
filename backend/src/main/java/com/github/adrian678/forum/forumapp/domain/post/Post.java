@@ -1,12 +1,13 @@
 package com.github.adrian678.forum.forumapp.domain.post;
 
-import com.github.adrian678.forum.forumapp.domain.board.BoardId;
 import com.github.adrian678.forum.forumapp.domain.user.UserId;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.lang.NonNull;
 
-import java.util.Date;
+import java.time.Instant;
+
+//import java.util.Date;
 
 
 @Document
@@ -15,7 +16,7 @@ public class Post {
     @NonNull
     private PostId pId;            //TODO must add Topic/Group before can finish this class
     @NonNull
-    private BoardId boardId;
+    private String boardName;
     @NonNull
     private UserId author;
     @NonNull
@@ -23,20 +24,20 @@ public class Post {
     @NonNull
     private String title;
     @NonNull
-    private int points;                 //TODO decide if points should be a value object
+    private int points;                 //TODO decide if points should be an Atomic Integer. How to store in db?
     @NonNull
-    private Date timestamp;
+    private Instant createdAt;     //TODO rename to createdAt?
     @NonNull
     private boolean archived;
 
-    private Post(PostId postId, UserId author, BoardId boardId, int points, String title, String content, Date createdAt){
-        this.pId = postId;
-        this.boardId = boardId;
+    private Post(PostId pId, UserId author, String boardName, int points, String title, String content, Instant timestamp){
+        this.pId = pId;
+        this.boardName = boardName;
         this.points = points;
         this.author = author;
         this.title = title;
         this.content = content;
-        this.timestamp = new Date(createdAt.getTime());
+        this.createdAt = timestamp;
     }
 
 
@@ -48,16 +49,16 @@ public class Post {
         return author;
     }
 
-    public BoardId getBoardId(){
-        return boardId;
+    public String getBoardName(){
+        return boardName;
     }
 
     public String getContent() {
         return content;
     }
 
-    public static Post createPost(UserId author, BoardId boardId, String title, String content){
-        return new Post(new PostId(), author, boardId, 1, title, content, new Date(System.currentTimeMillis()));
+    public static Post createPost(UserId author, String boardName, String title, String content){
+        return new Post(PostId.randomId(), author, boardName, 1, title, content, Instant.now());
     }
 
     public int getPoints() {
@@ -80,8 +81,8 @@ public class Post {
         this.title = title;
     }
 
-    public Date getTimestamp() {
-        return timestamp;
+    public Instant createdAt() {
+        return createdAt;
     }
 
     public void archive(){
@@ -89,5 +90,7 @@ public class Post {
         this.archived = true;
     }
 
-
+    public boolean isArchived() {
+        return archived;
+    }
 }

@@ -10,8 +10,12 @@ public class UserId implements Serializable {
         this.uuid = uuid;
     }
 
-    public static UserId of(String s){
+    public static UserId fromString(String s){
         return new UserId(UUID.fromString(s));
+    }
+
+    public static UserId randomId(){
+        return new UserId(UUID.randomUUID());
     }
 
     public UserId copy(){
@@ -20,6 +24,10 @@ public class UserId implements Serializable {
 
     public static UserId getInstance(){
         return new UserId(UUID.randomUUID());
+    }
+
+    public UUID getUuid() {
+        return uuid;
     }
 
     public String toString(){

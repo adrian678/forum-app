@@ -22,7 +22,7 @@ public class UserService implements UserDetailsService {
     }
 
     public List<User> getAllusers(){
-        //TODO is it possible to return a list of type UserDetails?
+        //TODO is it possible to return a list fromString type UserDetails?
         return userRepository.findAll();
     }
 

@@ -7,25 +7,33 @@ import java.util.UUID;
 
 
 public class CommentId implements Serializable {
-    private UUID cId;
+    private UUID uuid;
 
-    public CommentId(){
-        this.cId = UUID.randomUUID();
+    private CommentId(UUID uuid){
+        this.uuid = uuid;
     }
 
-    public CommentId(String id){
-        cId = UUID.fromString(id);
+    public static CommentId fromString(String s){
+        return new CommentId(UUID.fromString(s));
+    }
+
+    public static CommentId randomId(){
+        return new CommentId(UUID.randomUUID());
+    }
+
+    public UUID getUuid() {
+        return uuid;
     }
 
     @Override
     public String toString() {
-        return cId.toString();
+        return uuid.toString();
     }
 
     @Override
     public boolean equals(Object obj) {
         if(obj instanceof PostId){
-            return cId.equals(((CommentId) obj).cId);
+            return uuid.equals(((CommentId) obj).uuid);
         }
         return false;
     }
