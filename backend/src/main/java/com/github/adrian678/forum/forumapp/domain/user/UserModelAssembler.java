@@ -8,15 +8,17 @@ import org.springframework.stereotype.Component;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.*;
 
 @Component
-public class UserModelAssembler implements RepresentationModelAssembler<User, EntityModel<User>> {
-    @Override
-    public CollectionModel<EntityModel<User>> toCollectionModel(Iterable<? extends User> entities) {
-        return null;
-    }
+public class UserModelAssembler implements RepresentationModelAssembler<User, UserResponseDto> {
+//    @Override
+//    public CollectionModel<UserResponseDto> toCollectionModel(Iterable<? extends User> entities)
+//    {
+//        return CollectionModel.of(entities)
+//    }
 
     @Override
-    public EntityModel<User> toModel(User user) {
-        return EntityModel.of(user, linkTo(methodOn(UserController.class).one(user.getUsername())).withSelfRel(),
+    public UserResponseDto toModel(User user) {
+        System.out.println(user);
+        return UserResponseDto.fromUser(user).add(linkTo(methodOn(UserController.class).one(user.getUsername())).withSelfRel(),
                 linkTo(methodOn(UserController.class).all()).withRel("users"));
     }
 }

@@ -5,9 +5,7 @@ services:
     restart: always
     volumes:
       - /var/lib/db
-    environment:
-      - MONGO_INITDB_ROOT_USERNAME=docker
-      - MONGO_INITDB_ROOT_PASSWORD=docker
+
 
   backend:
     build: 
@@ -19,4 +17,5 @@ services:
       - 8081:8081
     environment:
       - DB_SERVER=db
+      - forum_secret_key=placeholder
     

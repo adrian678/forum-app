@@ -1,5 +1,6 @@
 package com.github.adrian678.forum.forumapp.domain.comment;
 
+import com.github.adrian678.forum.forumapp.domain.post.Post;
 import com.github.adrian678.forum.forumapp.domain.post.PostId;
 import com.github.adrian678.forum.forumapp.domain.user.UserId;
 import org.springframework.data.annotation.Id;
@@ -27,7 +28,13 @@ public class Comment {
     @NonNull
     private int points;
 
-    private Comment(CommentId cid, PostId parentPostId, CommentId parentComment, UserId author, String content, Instant createdAt, int points){
+    private String boardName;
+
+    private boolean removed;
+    //TODO comment should contain a field 'removed' corresponding to whether or not the comment has been removed by user/mod/admin
+
+    private Comment(CommentId cid, PostId parentPostId, CommentId parentComment, UserId author,
+                    String content, Instant createdAt, int points, String boardName, boolean removed){
         this.cid = cid;
         this.parentPostId = parentPostId;
         this.parentCommentId = parentComment;
@@ -35,11 +42,13 @@ public class Comment {
         this.content = content;
         this.createdAt = createdAt;
         this.points = points;
+        this.boardName = boardName;
+        this.removed = removed;
     }
 
-    //TODO create factory method
-    public static Comment create(PostId postId, CommentId parentComment, UserId author, String content){
-        return new Comment(CommentId.randomId(), postId, parentComment, author, content, Instant.now(), 1);
+    public static Comment create(Post post, CommentId parentComment, UserId author, String content){
+        return new Comment(CommentId.randomId(), post.getpId(), parentComment, author,
+                content, Instant.now(), 1, post.getBoardName(), false);
     }
 
     public PostId getParentPostId(){
@@ -74,7 +83,19 @@ public class Comment {
         return points;
     }
 
-//    public void upVote(){
+    public String getBoardName() {
+        return boardName;
+    }
+
+    public boolean isRemoved() {
+        return removed;
+    }
+
+    public void setRemoved(boolean removed) {
+        this.removed = removed;
+    }
+
+    //    public void upVote(){
 //        points = points.incrementByN(1);
 //    } //TODO return new points?
 //

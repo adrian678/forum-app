@@ -1,6 +1,6 @@
 package com.github.adrian678.forum.forumapp.domain.post;
 
-import com.github.adrian678.forum.forumapp.domain.user.UserId;
+import com.github.adrian678.forum.forumapp.domain.user.User;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.lang.NonNull;
@@ -18,7 +18,7 @@ public class Post {
     @NonNull
     private String boardName;
     @NonNull
-    private UserId author;
+    private String author;
     @NonNull
     private String content;
     @NonNull
@@ -30,22 +30,28 @@ public class Post {
     @NonNull
     private boolean archived;
 
-    private Post(PostId pId, UserId author, String boardName, int points, String title, String content, Instant timestamp){
+    private boolean isRemoved = false;
+
+    private Post(PostId pId, User author, String boardName, int points, String title, String content, Instant timestamp, boolean isRemoved){
         this.pId = pId;
         this.boardName = boardName;
         this.points = points;
-        this.author = author;
+        this.author = author.getUsername();
         this.title = title;
         this.content = content;
         this.createdAt = timestamp;
+        this.isRemoved = false;
     }
 
+    public static Post createPost(User author, String boardName, String title, String content){
+        return new Post(PostId.randomId(), author, boardName, 1, title, content, Instant.now(), false);
+    }
 
     public PostId getpId() {
         return pId;
     }
 
-    public UserId getAuthor() {
+    public String getAuthor() {
         return author;
     }
 
@@ -57,32 +63,32 @@ public class Post {
         return content;
     }
 
-    public static Post createPost(UserId author, String boardName, String title, String content){
-        return new Post(PostId.randomId(), author, boardName, 1, title, content, Instant.now());
-    }
-
     public int getPoints() {
         return points;
     }
 
-//    public void upVote(){
-//        points = points.incrementByN(1);
-//    }
+    public Instant getCreatedAt() {
+        return createdAt;
+    }
 
-//    public void downVote(){
-//        points = points.decrementByN(1);
-//    }
+    public boolean isRemoved() {
+        return isRemoved;
+    }
+
+    public boolean isArchived() {
+        return archived;
+    }
 
     public String getTitle() {
         return title;
     }
 
-    public void editTitle(String title) {
-        this.title = title;
-    }
-
     public Instant createdAt() {
         return createdAt;
+    }
+
+    public void editTitle(String title) {
+        this.title = title;
     }
 
     public void archive(){
@@ -90,7 +96,7 @@ public class Post {
         this.archived = true;
     }
 
-    public boolean isArchived() {
-        return archived;
+    public void setRemoved(boolean removed) {
+        isRemoved = removed;
     }
 }

@@ -9,5 +9,6 @@ public interface PostRepository extends MongoRepository<Post, PostId> {
 //    Optional<Post> findByPId(PostId postId);
 
     List<Post> findByAuthor(UserId userId);
+    List<Post> findByBoardName(String boardName);
     //TODO check on which methods/queries are included by default
 }

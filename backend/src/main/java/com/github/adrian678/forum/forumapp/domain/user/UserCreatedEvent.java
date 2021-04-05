@@ -1,31 +1,24 @@
-package com.github.adrian678.forum.forumapp.domain.post;
+package com.github.adrian678.forum.forumapp.domain.user;
 
 import com.github.adrian678.forum.forumapp.domain.DomainEvent;
 import com.github.adrian678.forum.forumapp.domain.EventId;
+import org.springframework.context.ApplicationEvent;
 
 import java.time.Instant;
 
-public class PostCreatedEvent extends DomainEvent {
-
-    String eventType = "post created";
+public class UserCreatedEvent extends DomainEvent {
+    String eventType = "user created";
     String details;
     Instant occurredAt;
     EventId identity;
-    Post post;
+    User user;
 
-    //TODO refactor
-    public PostCreatedEvent(Object source, Instant occurredAt, EventId identity, Post post){
+    public UserCreatedEvent(Object source, Instant occurredAt, EventId identity, User user){
         super(source);
-        this.details = "Post with ID: " + post.getpId().toString() + "created";
         this.occurredAt = occurredAt;
         this.identity = identity;
-        this.post = post;
+        this.user = user;
     }
-
-    //TODO revise whether there should be factory methods for this
-//    public static PostCreatedEvent instance(Post post){
-//        return new PostCreatedEvent(Instant.now(), EventId.randomId(), post);
-//    }
 
     @Override
     public String getEventType() {

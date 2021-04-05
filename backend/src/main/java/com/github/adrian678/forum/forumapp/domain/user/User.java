@@ -6,10 +6,12 @@ import org.springframework.data.annotation.PersistenceConstructor;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.lang.NonNull;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.time.Instant;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Document
 public class User implements UserDetails {
@@ -37,6 +39,10 @@ public class User implements UserDetails {
 
     private List<String> subscribedBoards;
 
+    private List<UserId> followedUsers;
+
+    //TODO add a list of roles/authorities
+    List<String> authorities;
 
     //TODO add list of bans
         //what is the default initial capacity of an arraylist?
@@ -55,7 +61,8 @@ public class User implements UserDetails {
     @PersistenceConstructor
     private User(UserId uid, String username, String password, String email, Instant createdOn, boolean isActive,
                  boolean isAccountNonExpired, boolean isAccountNonLocked, boolean isCredentialsNonExpired, boolean isEnabled,
-                 List<PostId> savedPosts, List<CommentId> savedComments, List<UserId> blockedUsers, List<String> subscribedBoards){
+                 List<PostId> savedPosts, List<CommentId> savedComments, List<UserId> blockedUsers, List<String> subscribedBoards,
+                 List<String> authorities, List<UserId> followedUsers){
         this.uid = uid;
         this.username = username;
         this.password = password;
@@ -70,18 +77,21 @@ public class User implements UserDetails {
         this.savedComments = new ArrayList<>(savedComments);
         this.blockedUsers = new ArrayList<>(blockedUsers);
         this.subscribedBoards = new ArrayList<>(subscribedBoards);
+        this.authorities = new ArrayList<>(authorities);
+        this.followedUsers = new ArrayList<>(followedUsers);
     }
 
     public static User createNewUser(String username, String password, String email){
         return new User(UserId.getInstance(), username, password, email, Instant.now(),true, true,
                 true, true,true, new ArrayList<PostId>(),
-                new ArrayList<CommentId>(), new ArrayList<UserId>(), new ArrayList<String>());
+                new ArrayList<CommentId>(), new ArrayList<UserId>(), new ArrayList<String>(), new ArrayList<String>(), new ArrayList<UserId>());
     }
 
     //TODO Spring Controller responses only include properties, not fields. Determine if there are other properties
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return null;
+        //TODO check if this populates the authorities field in the object returned by the UserController
+        return authorities.stream().map(SimpleGrantedAuthority::new).collect(Collectors.toList());
     }
 
 
@@ -99,24 +109,52 @@ public class User implements UserDetails {
         return password;
     }
 
+    public UserId getUid() {
+        return uid;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public Instant getCreatedOn() {
+        return createdOn;
+    }
+
+    public List<CommentId> getSavedComments() {
+        return savedComments;
+    }
+
+    public List<UserId> getBlockedUsers() {
+        return blockedUsers;
+    }
+
+    public List<String> getSubscribedBoards() {
+        return subscribedBoards;
+    }
+
+    public boolean isActive(){
+        return isActive;
+    }
+
     @Override
     public boolean isAccountNonExpired() {
-        return false;
+        return isAccountNonExpired;
     }
 
     @Override
     public boolean isAccountNonLocked() {
-        return false;
+        return isAccountNonLocked;
     }
 
     @Override
     public boolean isCredentialsNonExpired() {
-        return false;
+        return isCredentialsNonExpired;
     }
 
     @Override
     public boolean isEnabled() {
-        return false;
+        return isEnabled;
     }
 
     public void saveNewPost(PostId postId){
@@ -142,6 +180,11 @@ public class User implements UserDetails {
         //TODO check that the userToBlock is not null
     }
 
+    public void followUser(User user){
+        followedUsers.add(user.getId());
+    }
+
+
     public void addSubscription(String boardName){
         subscribedBoards.add(boardName);
         //TODO decide on the return type of this. Perhaps return a copy of the list of subscriptions on success?
@@ -150,5 +193,9 @@ public class User implements UserDetails {
 
     public List<PostId> getSavedPosts() {
         return Collections.unmodifiableList(savedPosts);
+    }
+
+    public boolean hasAuthority(String authority){
+        return authority.contains(authority);
     }
 }

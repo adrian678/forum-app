@@ -1,14 +1,19 @@
 package com.github.adrian678.forum.forumapp.domain.user;
 
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public class CreateUserRequestDto {
+
 
     private String username;
     private String password;
     private String email;
 
-    //TODO add validators
-    public CreateUserRequestDto(String username, String password, String email){
+    @JsonCreator
+    public CreateUserRequestDto(@JsonProperty("username") String username,
+                                @JsonProperty("password") String password, @JsonProperty("email") String email){
         this.username = username;
         this.password = password;
         this.email = email;
@@ -39,4 +44,10 @@ public class CreateUserRequestDto {
 //    public void setEmail(String email) {
 //        this.email = email;
 //    }
+
+
+    @Override
+    public String toString() {
+        return ("username: " + username +", password: " + password + ", email: " + email);
+    }
 }

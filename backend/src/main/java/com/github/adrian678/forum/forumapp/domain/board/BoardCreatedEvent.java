@@ -1,31 +1,25 @@
-package com.github.adrian678.forum.forumapp.domain.post;
+package com.github.adrian678.forum.forumapp.domain.board;
 
 import com.github.adrian678.forum.forumapp.domain.DomainEvent;
 import com.github.adrian678.forum.forumapp.domain.EventId;
 
 import java.time.Instant;
 
-public class PostCreatedEvent extends DomainEvent {
-
-    String eventType = "post created";
+//TODO make events serializable
+public class BoardCreatedEvent extends DomainEvent {
+    String eventType= "board created";
     String details;
     Instant occurredAt;
     EventId identity;
-    Post post;
+    Board board;
 
-    //TODO refactor
-    public PostCreatedEvent(Object source, Instant occurredAt, EventId identity, Post post){
+    public BoardCreatedEvent(Object source, Instant occurredAt, EventId identity,Board board){
         super(source);
-        this.details = "Post with ID: " + post.getpId().toString() + "created";
+        this.details = "board: \'" + board.getTopic() + "\' created";
         this.occurredAt = occurredAt;
         this.identity = identity;
-        this.post = post;
+        this.board = board;
     }
-
-    //TODO revise whether there should be factory methods for this
-//    public static PostCreatedEvent instance(Post post){
-//        return new PostCreatedEvent(Instant.now(), EventId.randomId(), post);
-//    }
 
     @Override
     public String getEventType() {
@@ -46,4 +40,6 @@ public class PostCreatedEvent extends DomainEvent {
     public EventId getIdentity() {
         return identity;
     }
+
+
 }

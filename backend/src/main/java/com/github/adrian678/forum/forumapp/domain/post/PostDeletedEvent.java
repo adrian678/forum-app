@@ -5,26 +5,24 @@ import com.github.adrian678.forum.forumapp.domain.EventId;
 
 import java.time.Instant;
 
-public class PostCreatedEvent extends DomainEvent {
+public class PostDeletedEvent extends DomainEvent {
 
-    String eventType = "post created";
+    String eventType = "post deleted";
     String details;
     Instant occurredAt;
     EventId identity;
-    Post post;
+    PostId postId;
 
-    //TODO refactor
-    public PostCreatedEvent(Object source, Instant occurredAt, EventId identity, Post post){
+    public PostDeletedEvent(Object source, Instant occurredAt, EventId identity, Post post){
         super(source);
-        this.details = "Post with ID: " + post.getpId().toString() + "created";
+        this.details = "Post with ID: " + post.getpId().toString() + "deleted";
         this.occurredAt = occurredAt;
         this.identity = identity;
-        this.post = post;
+        this.postId = post.getpId();
     }
 
-    //TODO revise whether there should be factory methods for this
-//    public static PostCreatedEvent instance(Post post){
-//        return new PostCreatedEvent(Instant.now(), EventId.randomId(), post);
+//    public static PostDeletedEvent instance(Post post){
+//        return new PostDeletedEvent(Instant.now(), EventId.randomId(), post);
 //    }
 
     @Override
