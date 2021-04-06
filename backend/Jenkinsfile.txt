@@ -5,6 +5,7 @@ pipeline {
             agent {
                 dockerfile{
                     dir 'backend'
+                    args '-v /tmp:/tmp'
                 }
             }
             steps{
