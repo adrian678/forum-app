@@ -9,7 +9,7 @@ node {
         /* need to move to backend dir */
         dir("backend"){
             def dockerfile = 'backend.Dockerfile'
-            app = docker.build("forum-backend:1", " -f ${dockerfile} ./backend/")
+            app = docker.build("forum-backend:1", " -f ${dockerfile} .")
         }
     }
 
