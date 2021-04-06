@@ -1,17 +1,19 @@
 pipeline {
-    agent {
-        docker { image 'maven:3.6.3-jdk-8'}
-    }
     stages {
         stage('backend'){
-            dir("backend"){
-                agent{dockerfile true}
-                stage('Build') {
-                    sh 'echo bananas'
-            
+            steps{
+                dir("backend"){
+                    agent{dockerfile true}
+                    stage('Build') {
+                        sh 'echo bananas'
+                        echo '${pwd}'
+                    }
                 }
             }
+            
         }
-        
+        stage('frontend'){
+            echo '${pwd}'
+        }
     }
 }
