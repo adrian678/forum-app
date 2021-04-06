@@ -1,19 +1,20 @@
-pipeline {
-    agent any
-    stages {
-        stage('backend'){
-            agent {
-                dockerfile{
-                    filename 'backend.Dockerfile'
-                    dir 'backend'
-                    args '-v /tmp:/tmp'
-                }
-            }
-            steps{
-                bat 'cd'
-            }
-            
+node {
+    def app
+
+    stage('Clone repo') {
+        checkout scm
+    }
+
+    stage('Build backend image') {
+        /* need to move to backend dir */
+        dir("backend"){
+            app = docker.build("forum-backend/hellonode")
         }
-        
+    }
+
+    stage('Push backend image') {
+        docker.withRegistry('https://registry.hub.docker.com', '4a008ea4-cdaa-4b92-87fe-9123383f6e4e') {
+            app.push("latest")
+        }
     }
 }

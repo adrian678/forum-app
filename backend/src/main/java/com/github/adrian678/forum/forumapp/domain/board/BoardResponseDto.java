@@ -10,13 +10,13 @@ import java.util.List;
 public class BoardResponseDto extends RepresentationModel<BoardResponseDto> {
     private String topic;
     private String description;
-    private UserId owner;
+    private String owner;
     private List<String> rules;
     private Quantity numSubscribers;
     private List<UserId> moderators;
     private List<PostId> pinnedPosts;
 
-    public BoardResponseDto(String topic, String description, UserId owner, List<String> rules,
+    public BoardResponseDto(String topic, String description, String owner, List<String> rules,
                             Quantity numSubscribers, List<UserId> moderators, List<PostId> pinnedPosts){
         this.topic = topic;
         this.description = description;
@@ -36,55 +36,55 @@ public class BoardResponseDto extends RepresentationModel<BoardResponseDto> {
         return topic;
     }
 
-    public void setTopic(String topic) {
-        this.topic = topic;
-    }
+//    public void setTopic(String topic) {
+//        this.topic = topic;
+//    }
 
     public String getDescription() {
         return description;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
-    }
+//    public void setDescription(String description) {
+//        this.description = description;
+//    }
 
-    public UserId getOwner() {
+    public String getOwner() {
         return owner;
     }
 
-    public void setOwner(UserId owner) {
-        this.owner = owner;
-    }
+//    public void setOwner(String owner) {
+//        this.owner = owner;
+//    }
 
     public List<String> getRules() {
         return rules;
     }
 
-    public void setRules(List<String> rules) {
-        this.rules = rules;
-    }
+//    public void setRules(List<String> rules) {
+//        this.rules = rules;
+//    }
 
     public Quantity getNumSubscribers() {
         return numSubscribers;
     }
 
-    public void setNumSubscribers(Quantity numSubscribers) {
-        this.numSubscribers = numSubscribers;
-    }
+//    public void setNumSubscribers(Quantity numSubscribers) {
+//        this.numSubscribers = numSubscribers;
+//    }
 
     public List<UserId> getModerators() {
         return moderators;
     }
 
-    public void setModerators(List<UserId> moderators) {
-        this.moderators = moderators;
-    }
+//    public void setModerators(List<UserId> moderators) {
+//        this.moderators = moderators;
+//    }
 
     public List<PostId> getPinnedPosts() {
         return pinnedPosts;
     }
 
-    public void setPinnedPosts(List<PostId> pinnedPosts) {
-        this.pinnedPosts = pinnedPosts;
-    }
+//    public void setPinnedPosts(List<PostId> pinnedPosts) {
+//        this.pinnedPosts = pinnedPosts;
+//    }
 }

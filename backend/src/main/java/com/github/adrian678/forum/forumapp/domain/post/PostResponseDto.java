@@ -8,7 +8,7 @@ import java.time.Instant;
 public class PostResponseDto extends RepresentationModel<PostResponseDto> {
     private PostId postId;
     private String boardName;
-    private UserId author;
+    private String author;
     private String content;
     private String title;
     private int points;
@@ -16,7 +16,7 @@ public class PostResponseDto extends RepresentationModel<PostResponseDto> {
     private boolean isLikedByUser = false;
     private boolean isSavedByUser = false;
 
-    public PostResponseDto(PostId postId, String boardName, UserId author, String content, String title, int points, Instant createdAt){
+    public PostResponseDto(PostId postId, String boardName, String author, String content, String title, int points, Instant createdAt){
         this.postId = postId;
         this.boardName = boardName;
         this.author = author;
@@ -49,7 +49,7 @@ public class PostResponseDto extends RepresentationModel<PostResponseDto> {
         return boardName;
     }
 
-    public UserId getAuthor() {
+    public String getAuthor() {
         return author;
     }
 
