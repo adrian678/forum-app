@@ -13,7 +13,7 @@ node {
         /* need to move to backend dir */
         dir("backend"){
             def dockerfile = 'backend.Dockerfile'
-            app = docker.build(${registry}", " -f ${dockerfile} .")
+            app = docker.build("${registry}", " -f ${dockerfile} .")
         }
     }
 
