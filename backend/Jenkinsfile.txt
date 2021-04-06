@@ -4,6 +4,8 @@ pipeline {
         stage('backend'){
             agent {
                 dockerfile{
+                    dir 'backend'
+                    label 'backend-img'
                     args '-v /tmp:/tmp'
                 }
             }
