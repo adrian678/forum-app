@@ -10,7 +10,7 @@ node {
         dir("backend"){
             def dockerfile = 'backend.Dockerfile'
             def imageName = 'adrian678/forum-backend'
-            app = docker.build("${registry}", " -f ${dockerfile} .")
+            app = docker.build("${imageName}", " -f ${dockerfile} .")
         }
     }
 
