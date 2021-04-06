@@ -1,13 +1,16 @@
 pipeline {
-    agent {any}
+    agent any
     stages {
         stage('backend'){
             steps{
                 dir("backend"){
                     agent{dockerfile true}
                     stage('Build') {
-                        sh 'echo bananas'
-                        echo '${pwd}'
+                        steps {
+                            sh 'echo bananas'
+                            echo '${pwd}'
+                        }
+                        
                     }
                 }
             }
