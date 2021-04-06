@@ -13,14 +13,14 @@ node {
         /* need to move to backend dir */
         dir("backend"){
             def dockerfile = 'backend.Dockerfile'
-            app = docker.build(${registry}:${env.BUILD_ID}", " -f ${dockerfile} .")
+            app = docker.build(${registry}", " -f ${dockerfile} .")
         }
     }
 
     stage('Push backend image') {
         /* comment for commit */
         docker.withRegistry('https://registry.hub.docker.com/adrian678/forum-backend', '4a008ea4-cdaa-4b92-87fe-9123383f6e4e') {
-            app.push()
+            app.push("latest")
         }
     }
 }
