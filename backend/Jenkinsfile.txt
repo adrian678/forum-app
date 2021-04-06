@@ -7,8 +7,10 @@ node {
 
     stage('Build backend image') {
         /* need to move to backend dir */
-        def dockerfile = 'backend.Dockerfile'
-        app = docker.build("forum-backend:1", " -f ${dockerfile} ./backend/")
+        dir("backend"){
+            def dockerfile = 'backend.Dockerfile'
+            app = docker.build("forum-backend:1", " -f ${dockerfile} ./backend/")
+        }
     }
 
     stage('Push backend image') {
