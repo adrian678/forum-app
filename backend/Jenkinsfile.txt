@@ -4,8 +4,7 @@ pipeline {
         stage('backend'){
             agent {
                 dockerfile{
-                    dir 'backend'
-                    filename 'Dockerfile.build'
+                    filename 'Dockerfile'
                     args '-v /tmp:/tmp'
                 }
             }
