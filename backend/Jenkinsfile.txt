@@ -5,7 +5,7 @@ pipeline {
             agent {
                 dockerfile{
                     dir 'backend'
-                    filename ''
+                    filename 'Dockerfile.build'
                     args '-v /tmp:/tmp'
                 }
             }
