@@ -27,7 +27,7 @@ public class Board {
     @NonNull
     private String owner;
 
-    private List<UserId> moderators;        //TODO consider changing to a Set instead of List
+    private List<String> moderators;        //TODO consider changing to a Set instead of List
 
     private List<String> rules;
 
@@ -35,11 +35,11 @@ public class Board {
 
     private boolean removed;
 
-    private Board(String topic, String description, User owner, Quantity numSubscribers,
-                    Instant createdAt, List<UserId> moderators, List<String > rules, List<PostId> pinnedPosts, boolean removed){
+    private Board(String topic, String description, String owner, Quantity numSubscribers,
+                    Instant createdAt, List<String> moderators, List<String > rules, List<PostId> pinnedPosts, boolean removed){
         this.topic = topic;
         this.description = description;
-        this.owner = owner.getUsername();
+        this.owner = owner;
         this.numSubscribers = numSubscribers;
         this.createdAt =  createdAt;//new Date(createdAt.getTime()); //TODO is defensive programming necessary here and below?
         this.moderators = new ArrayList<>(moderators);
@@ -48,15 +48,15 @@ public class Board {
         this.removed = removed;
     }
 
-    public static Board createNewBoard(String topic, String description, User owner, List<String> rules){
-        return new Board(topic, description, owner, Quantity.of(1), Instant.now(), new ArrayList<UserId>(), rules, new ArrayList<>(), false);
+    public static Board createNewBoard(String topic, String description, String owner, List<String> rules){
+        return new Board(topic, description, owner, Quantity.of(1), Instant.now(), new ArrayList<String>(), rules, new ArrayList<>(), false);
     }
 
     public void rename(String newName){
         topic = newName;
     }
 
-    public List<UserId> getModerators(){
+    public List<String > getModerators(){
         return Collections.unmodifiableList(moderators);
     }
 
@@ -110,7 +110,7 @@ public class Board {
         }
         //check is proposed moderator is subscribed to the board
         if(newModerator.getSubscribedBoards().contains(this)){
-            moderators.add(newModerator.getId());
+            moderators.add(newModerator.getUsername());
             return true;
         }
         return false;
@@ -123,5 +123,18 @@ public class Board {
             return true;
         }
         return false;
+    }
+    //TODO Board should throw an exception if modifications are attempted when removed is set to true
+
+    public void addRule(String newRule){
+        rules.add(newRule);
+    }
+
+    public void removeRule(String rule){
+        rules.remove(rule);
+    }
+
+    public boolean hasModeratorByName(String username){
+        return moderators.contains(username);
     }
 }

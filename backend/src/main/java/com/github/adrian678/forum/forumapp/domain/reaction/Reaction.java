@@ -1,6 +1,7 @@
 package com.github.adrian678.forum.forumapp.domain.reaction;
 
 import com.github.adrian678.forum.forumapp.domain.comment.CommentId;
+import com.github.adrian678.forum.forumapp.domain.post.PostId;
 import com.github.adrian678.forum.forumapp.domain.user.UserId;
 
 public interface Reaction {
@@ -9,5 +10,7 @@ public interface Reaction {
     int isWorth();
     boolean isPositive();
     boolean isNegative();
+    String getUsername();
+    PostId getPostId();
 
 }

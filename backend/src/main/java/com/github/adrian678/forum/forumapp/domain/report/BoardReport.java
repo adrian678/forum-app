@@ -1,43 +1,41 @@
 package com.github.adrian678.forum.forumapp.domain.report;
 
-import com.github.adrian678.forum.forumapp.domain.comment.CommentId;
-import com.github.adrian678.forum.forumapp.domain.user.UserId;
+import com.github.adrian678.forum.forumapp.domain.user.User;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document(collation="Reports")
-public class InappropriateCommentReport implements Report{
+public class BoardReport implements Report{
 
     @Id
     ReportId reportId;
 
     String boardName;
 
-    UserId submitter;
+    String submitter;
 
-    CommentId commentId;
+    String reportCategory;
 
     String description;
 
     boolean resolved = false;
 
-    private InappropriateCommentReport(ReportId reportId, String boardName, UserId submitter, CommentId commentId, String description, boolean resolved){
+    private BoardReport(ReportId reportId, String boardName, String submitter, String reason, String description, boolean resolved){
         this.reportId = reportId;
         this.boardName = boardName;
         this.submitter = submitter;
-        this.commentId = commentId;
+        this.reportCategory = reason;
         this.description = description;
         this.resolved = resolved;
     }
 
-    public InappropriateCommentReport createNew(String boardName, UserId submitter, CommentId commentId, String description){
-        return new InappropriateCommentReport(ReportId.randomId(), boardName,
-            submitter, commentId, description, false);
+    public static BoardReport createNew(String boardName, User submitter, String reason, String description){
+        return new BoardReport(ReportId.randomId(), boardName, submitter.getUsername(),  reason, description, false);
     }
 
     @Override
     public String getType() {
-        return "Inappropriate Comment";
+        return "board report";
     }
 
     @Override
@@ -46,13 +44,13 @@ public class InappropriateCommentReport implements Report{
     }
 
     @Override
-    public String getBoardName() {
-        return boardName;
+    public String submittedBy() {
+        return submitter;
     }
 
     @Override
-    public UserId submittedBy() {
-        return submitter;
+    public String getReportCategory() {
+        return reportCategory;
     }
 
     @Override

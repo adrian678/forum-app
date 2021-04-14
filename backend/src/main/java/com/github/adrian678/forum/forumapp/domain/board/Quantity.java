@@ -1,12 +1,13 @@
 package com.github.adrian678.forum.forumapp.domain.board;
 
 
+import java.io.Serializable;
 
-public class Quantity {
+public class Quantity implements Serializable {
     private final int quantity;
 
-    private Quantity(int n){
-        this.quantity = n;
+    private Quantity(int quantity){
+        this.quantity = quantity;
     }
     public static Quantity of(int n){
         if(n < 0){
@@ -30,5 +31,9 @@ public class Quantity {
             throw new IllegalArgumentException("Cannot subtract a number greater than itself");
         }
         return  new Quantity(quantity - num);
+    }
+
+    public int getQuantity() {
+        return quantity;
     }
 }

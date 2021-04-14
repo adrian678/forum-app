@@ -15,6 +15,7 @@ public class PostResponseDto extends RepresentationModel<PostResponseDto> {
     private Instant createdAt;
     private boolean isLikedByUser = false;
     private boolean isSavedByUser = false;
+    //TODO add isRemoved field
 
     public PostResponseDto(PostId postId, String boardName, String author, String content, String title, int points, Instant createdAt){
         this.postId = postId;

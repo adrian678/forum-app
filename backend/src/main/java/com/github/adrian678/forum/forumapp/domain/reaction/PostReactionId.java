@@ -9,20 +9,29 @@ public class PostReactionId implements Serializable {
 
     PostId postId;
 
-    UserId userId;
+    String username;
 
     //a postreaction should only be created from existing
 
-    public PostReactionId(PostId postId, UserId userId){
+    public PostReactionId(PostId postId, String username){
         this.postId = postId;
-        this.userId = userId;
+        this.username = username;
     }
 
     public PostId getPostId() {
         return postId;
     }
 
-    public UserId getUserId() {
-        return userId;
+    public String getUsername() {
+        return username;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if(obj instanceof  PostReactionId){
+            PostReactionId reactionId = (PostReactionId) obj;
+            return reactionId.getPostId().equals(postId) && reactionId.getUsername().equals(username);
+        }
+        return false;
     }
 }

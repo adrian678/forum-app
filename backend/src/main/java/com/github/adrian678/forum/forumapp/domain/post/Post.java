@@ -1,7 +1,9 @@
 package com.github.adrian678.forum.forumapp.domain.post;
 
 import com.github.adrian678.forum.forumapp.domain.user.User;
+import com.github.adrian678.forum.forumapp.domain.user.UserId;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.lang.NonNull;
 
@@ -26,24 +28,25 @@ public class Post {
     @NonNull
     private int points;                 //TODO decide if points should be an Atomic Integer. How to store in db?
     @NonNull
-    private Instant createdAt;     //TODO rename to createdAt?
+    @Indexed
+    private Instant createdAt;     //TODO rename to createdAt?  //TODO make another index on createdAt
     @NonNull
     private boolean archived;
 
     private boolean isRemoved = false;
 
-    private Post(PostId pId, User author, String boardName, int points, String title, String content, Instant timestamp, boolean isRemoved){
+    private Post(PostId pId, String author, String boardName, int points, String title, String content, Instant createdAt, boolean isRemoved){
         this.pId = pId;
         this.boardName = boardName;
         this.points = points;
-        this.author = author.getUsername();
+        this.author = author;
         this.title = title;
         this.content = content;
-        this.createdAt = timestamp;
+        this.createdAt = createdAt;
         this.isRemoved = false;
     }
 
-    public static Post createPost(User author, String boardName, String title, String content){
+    public static Post createPost(String author, String boardName, String title, String content){
         return new Post(PostId.randomId(), author, boardName, 1, title, content, Instant.now(), false);
     }
 

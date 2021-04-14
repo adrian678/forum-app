@@ -1,24 +1,24 @@
-package com.github.adrian678.forum.forumapp.domain.user;
+package com.github.adrian678.forum.forumapp.domain.reaction;
 
 import com.github.adrian678.forum.forumapp.domain.DomainEvent;
 import com.github.adrian678.forum.forumapp.domain.EventId;
-import org.springframework.context.ApplicationEvent;
 
 import java.time.Instant;
 
-public class UserCreatedEvent extends DomainEvent {
-    String eventType = "user created";
+public class ReactionCreatedEvent extends DomainEvent {
+
+    String eventType = "post created";
     String details;
     Instant occurredAt;
     EventId identity;
-    User user;
+    Reaction reaction;
 
-    public UserCreatedEvent(Object source, Instant occurredAt, EventId identity, User user){
+    public ReactionCreatedEvent(Object source, Instant occurredAt, EventId identity, Reaction reaction){
         super(source);
-        this.details = "user created with username" + user.getUsername();
+        this.details = "User " + reaction.getUsername() + " reacted to post with ID: " + reaction.getPostId().toString();
         this.occurredAt = occurredAt;
         this.identity = identity;
-        this.user = user;
+        this.reaction = reaction;
     }
 
     @Override
@@ -39,5 +39,9 @@ public class UserCreatedEvent extends DomainEvent {
     @Override
     public EventId getIdentity() {
         return identity;
+    }
+
+    public Reaction getReaction() {
+        return reaction;
     }
 }

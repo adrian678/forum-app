@@ -18,6 +18,7 @@ public class UserModelAssembler implements RepresentationModelAssembler<User, Us
     @Override
     public UserResponseDto toModel(User user) {
         System.out.println(user);
+        //TODO how to account for pagination + sorting parameters?
         return UserResponseDto.fromUser(user).add(linkTo(methodOn(UserController.class).one(user.getUsername())).withSelfRel(),
                 linkTo(methodOn(UserController.class).all()).withRel("users"));
     }

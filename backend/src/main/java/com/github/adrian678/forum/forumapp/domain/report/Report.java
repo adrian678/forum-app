@@ -9,9 +9,9 @@ public interface Report {
 
     public ReportId getReportId();
 
-    public String getBoardName(); //TODO change from BoardId to String to match against topic. Also consider removing BoardId
+    public String submittedBy();
 
-    public UserId submittedBy();
+    public String getReportCategory();
 
     public String getDescription();
 

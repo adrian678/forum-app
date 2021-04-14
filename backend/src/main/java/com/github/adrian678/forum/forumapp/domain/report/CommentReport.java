@@ -1,66 +1,66 @@
 package com.github.adrian678.forum.forumapp.domain.report;
 
 import com.github.adrian678.forum.forumapp.domain.comment.CommentId;
-import com.github.adrian678.forum.forumapp.domain.user.UserId;
+import com.github.adrian678.forum.forumapp.domain.user.User;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document(collation="Reports")
-public class BrokenBoardRulesReport implements Report{
+public class CommentReport implements Report{
+
     @Id
     ReportId reportId;
 
-    String boardName;
-
-    UserId submitter;
+    String submitter;
 
     CommentId commentId;
+
+    String reportCategory;
 
     String description;
 
     boolean resolved = false;
 
-    private BrokenBoardRulesReport(ReportId reportId, String boardName, UserId submitter, CommentId commentId, String description, boolean resolved){
+    private CommentReport(ReportId reportId, String submitter, CommentId commentId, String reason, String description, boolean resolved){
         this.reportId = reportId;
-        this.boardName = boardName;
         this.submitter = submitter;
         this.commentId = commentId;
+        this.reportCategory = reason;
         this.description = description;
         this.resolved = resolved;
     }
 
-    public BrokenBoardRulesReport createNew(String boardName, UserId submitter, CommentId commentId, String description){
-        return new BrokenBoardRulesReport(ReportId.randomId(), boardName,
-                submitter, commentId, description, false);
+    public static CommentReport createNew(User submitter, CommentId commentId, String reason, String description){
+        return new CommentReport(ReportId.randomId(), submitter.getUsername(), commentId, reason, description, false);
     }
 
     @Override
     public String getType() {
-        return null;
+        return "comment report";
     }
 
     @Override
     public ReportId getReportId() {
-        return null;
+        return reportId;
     }
 
     @Override
-    public String getBoardName() {
-        return null;
+    public String  submittedBy() {
+        return submitter;
     }
 
     @Override
-    public UserId submittedBy() {
-        return null;
+    public String getReportCategory() {
+        return reportCategory;
     }
 
     @Override
     public String getDescription() {
-        return null;
+        return description;
     }
 
     @Override
     public boolean isResolved() {
-        return false;
+        return resolved;
     }
 }

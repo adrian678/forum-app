@@ -6,13 +6,11 @@ import java.time.Instant;
 
 public class UserResponseDto extends RepresentationModel<UserResponseDto> {
     private String username;
-    private String email;
     private Instant createdOn;
 
 
     public UserResponseDto(String username, String email, Instant createdOn){
         this.username = username;
-        this.email = email;
         this.createdOn = createdOn;
     }
 
@@ -22,10 +20,6 @@ public class UserResponseDto extends RepresentationModel<UserResponseDto> {
 
     public String getUsername() {
         return username;
-    }
-
-    public String getEmail() {
-        return email;
     }
 
     public Instant getCreatedOn() {

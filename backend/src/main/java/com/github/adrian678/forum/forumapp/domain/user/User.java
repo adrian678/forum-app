@@ -39,13 +39,11 @@ public class User implements UserDetails {
 
     private List<String> subscribedBoards;
 
+    private List<String> authorities;
+
     private List<UserId> followedUsers;
 
-    //TODO add a list of roles/authorities
-    List<String> authorities;
-
-    //TODO add list of bans
-        //what is the default initial capacity of an arraylist?
+    private List<Ban> bans;
 
     //user details specific fields
     private boolean isActive;
@@ -62,7 +60,7 @@ public class User implements UserDetails {
     private User(UserId uid, String username, String password, String email, Instant createdOn, boolean isActive,
                  boolean isAccountNonExpired, boolean isAccountNonLocked, boolean isCredentialsNonExpired, boolean isEnabled,
                  List<PostId> savedPosts, List<CommentId> savedComments, List<UserId> blockedUsers, List<String> subscribedBoards,
-                 List<String> authorities, List<UserId> followedUsers){
+                 List<String> authorities, List<UserId> followedUsers, List<Ban> bans){
         this.uid = uid;
         this.username = username;
         this.password = password;
@@ -79,15 +77,15 @@ public class User implements UserDetails {
         this.subscribedBoards = new ArrayList<>(subscribedBoards);
         this.authorities = new ArrayList<>(authorities);
         this.followedUsers = new ArrayList<>(followedUsers);
+        this.bans = new ArrayList<>(bans);
     }
 
     public static User createNewUser(String username, String password, String email){
         return new User(UserId.getInstance(), username, password, email, Instant.now(),true, true,
                 true, true,true, new ArrayList<PostId>(),
-                new ArrayList<CommentId>(), new ArrayList<UserId>(), new ArrayList<String>(), new ArrayList<String>(), new ArrayList<UserId>());
+                new ArrayList<CommentId>(), new ArrayList<UserId>(), new ArrayList<String>(), new ArrayList<String>(), new ArrayList<UserId>(), new ArrayList<Ban>());
     }
 
-    //TODO Spring Controller responses only include properties, not fields. Determine if there are other properties
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         //TODO check if this populates the authorities field in the object returned by the UserController
@@ -173,11 +171,13 @@ public class User implements UserDetails {
         savedComments.remove(commentId);
     }
 
-    public void blockUser(UserId userToBlock){
-        blockedUsers.add(userToBlock);
+    public void blockUser(User userToBlock){
+        if(null == userToBlock){
+            return;
+        }
+        blockedUsers.add(userToBlock.getId());
         //TODO change ouutput type to something that can identify success or failure, like a boolean
         //TODO check that the list can handle a new insertion
-        //TODO check that the userToBlock is not null
     }
 
     public void followUser(User user){
@@ -197,5 +197,47 @@ public class User implements UserDetails {
 
     public boolean hasAuthority(String authority){
         return authority.contains(authority);
+    }
+
+    public void addRole(String role){ //TODO change return type to boolean
+        authorities.add(role);
+    }
+
+    public void removeRole(String role){
+        authorities.remove(role);
+    }
+
+    public List<UserId> getFollowedUsers() {
+        return followedUsers;   //TODO return defensive copy?
+    }
+
+    public List<Ban> getBans() {
+        return bans;
+    }
+
+    public void addBan(Ban ban){
+        bans.add(ban); //TODO are bans immmutable?
+        //TODO change return type to boolean
+    }
+
+    public void removeBan(Ban ban){
+        bans.remove(ban);
+        //TODO change return type to boolean
+    }
+
+    public void deactivateBan(Ban ban){
+        for(Ban oldBan : bans){
+            if(oldBan.equals(ban)){
+                oldBan.deactivate();
+            }
+        }
+    }
+
+    public boolean isBannedFromBoard(String boardName){
+        return !bans.stream().filter(ban->ban.isActive() && ban.getBoardName().equals(boardName)).collect(Collectors.toList()).isEmpty();
+    }
+
+    public Ban findBanById(UUID uuid){
+        return bans.stream().filter(ban->ban.getUuid().equals(uuid)).findFirst().get();
     }
 }

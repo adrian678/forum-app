@@ -7,18 +7,23 @@ import com.github.adrian678.forum.forumapp.domain.board.BoardRepository;
 import com.github.adrian678.forum.forumapp.domain.post.Post;
 import com.github.adrian678.forum.forumapp.domain.post.PostNotFoundException;
 import com.github.adrian678.forum.forumapp.domain.post.PostRepository;
+import com.github.adrian678.forum.forumapp.domain.report.CommentReport;
+import com.github.adrian678.forum.forumapp.domain.report.CreateReportDto;
+import com.github.adrian678.forum.forumapp.domain.report.ReportCreatedEvent;
+import com.github.adrian678.forum.forumapp.domain.report.ReportRepository;
 import com.github.adrian678.forum.forumapp.domain.user.User;
 import com.github.adrian678.forum.forumapp.domain.user.UserRepository;
+import com.github.adrian678.forum.forumapp.identityandaccess.Role;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.hateoas.CollectionModel;
-import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.IanaLinkRelations;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.Instant;
@@ -41,9 +46,11 @@ public class CommentController {
     BoardRepository boardRepository;
     @Autowired
     CommentModelAssembler commentModelAssembler;
-
+    @Autowired
+    ReportRepository reportRepository;
     @Autowired
     ApplicationEventPublisher publisher;
+
 
     @GetMapping("/comments")
     public CollectionModel<CommentResponseDto> all(){
@@ -52,12 +59,13 @@ public class CommentController {
         return CollectionModel.of(comments, linkTo(methodOn(CommentController.class).all()).withSelfRel());
     }
 
-    @GetMapping("/comments/:commentId")
+    @GetMapping("/comments/{commentId}")
     public CommentResponseDto one(@PathVariable String commentId){
         Comment comment = commentRepository.findById(CommentId.fromString(commentId)).orElseThrow(()-> new CommentNotFoundException("no such comment"));
         return commentModelAssembler.toModel(comment);
     }
 
+    @PreAuthorize(Role.HAS_ROLE_BASIC_USER_EXPR)
     @PostMapping("/comments")
     public ResponseEntity<?> create(@RequestBody CreateCommentRequestDto commentDto){
         //check if post is open to new comments
@@ -66,12 +74,13 @@ public class CommentController {
             //produce forbidden response
             return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED).build();
         }
+        User author = retrieveFullAuthenticatedUser();
         Comment comment = Comment.create(post, commentDto.getParentCommentId(),
-                commentDto.getAuthor(), commentDto.getContent());
+                author, commentDto.getContent());
         Comment savedComment = commentRepository.save(comment);
         publisher.publishEvent(new CommentCreatedEvent(this, Instant.now(), EventId.randomId(), savedComment));
-        EntityModel<Comment> model = EntityModel.of(savedComment);
-        return ResponseEntity.created(model.getRequiredLink(IanaLinkRelations.SELF).toUri()).body(model);
+        CommentResponseDto dto = commentModelAssembler.toModel(savedComment);
+        return ResponseEntity.created(dto.getRequiredLink(IanaLinkRelations.SELF).toUri()).body(dto);
     }
 
 //    //TODO Rename and match this method to a use case, like EditComment. Also reconsider path
@@ -97,38 +106,38 @@ public class CommentController {
 //        return ResponseEntity.ok(commentRepository.save(comment)); //TODO check if correct status code
 //    }
 
-    @DeleteMapping("/comments/:commentId")
-    public ResponseEntity<?> modify(@PathVariable String commentId, Authentication authentication){
-        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-        User principal = userRepository.findByUsername(((UserDetails) authentication.getPrincipal()).getUsername()).get();
-        Comment comment = commentRepository.findById(CommentId.fromString(commentId))
-                .orElseThrow(()-> new CommentNotFoundException("no such comment"));
+    @PreAuthorize(Role.HAS_ROLE_BASIC_USER_EXPR)
+    @PostMapping("/comments/{commentId}/remove")
+    public ResponseEntity<?> remove(@PathVariable String commentId, Authentication authentication){
+        User principal = retrieveFullAuthenticatedUser();
+        Comment comment = commentRepository.findById(CommentId.fromString(commentId)).orElseThrow(()-> new CommentNotFoundException("no such comment"));
         boolean isAuthorized = false;
         //check if principal is author of the comment
-        if(comment.getAuthor().equals(principal.getId())){
-            isAuthorized = true;
-        } else {
-            List<String> authorities = principal.getAuthorities().stream()
-                    .map(authority-> authority.getAuthority())
-                    .collect(Collectors.toList());
-            //check if principal is an admin
-            if(authorities.contains("ROLE_ADMIN")){
-                isAuthorized = true;
-            } else {
-                Board board = boardRepository.findById(comment.getBoardName()).orElseThrow(()-> new BoardNotFoundException("No such board found"));
-                //check if principal is a moderator
-                if(board.containsModerator(principal)){
-                    isAuthorized = true;
-                }
-            }
-
-        }
-        if(isAuthorized){
+        if(comment.getAuthor().equals(principal.getId()) || principal.hasAuthority(Role.ROLE_ADMIN)){
+//            isAuthorized = true;
             comment.setRemoved(true);
             commentRepository.save(comment);
             publisher.publishEvent(new CommentDeletedEvent(this, Instant.now(), EventId.randomId(), comment));
             return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
         }
         return ResponseEntity.status(403).build();
+    }
+
+    @PreAuthorize(Role.HAS_ROLE_BASIC_USER_EXPR)
+    @PostMapping("/comments/{commentId}/reports")
+    public ResponseEntity<?> createReport(@PathVariable String commentId, @RequestBody CreateReportDto reportDto){
+        User authenticatedUser = retrieveFullAuthenticatedUser();
+        CommentReport report = CommentReport.createNew(authenticatedUser, CommentId.fromString(commentId), reportDto.getReportCategory(), reportDto.getDescription());
+        CommentReport savedReport = reportRepository.save(report);
+        publisher.publishEvent(new ReportCreatedEvent(this, Instant.now(), EventId.randomId(), report));
+        //TODO provide endpoints for viewing reports against boards specifically to admins
+        //TODO create a Response DTO of reports
+        return ResponseEntity.ok().build();
+    }
+
+    //TODO see if this can be refactored into a utility class. May be issue with @Autowiring the repository
+    private User retrieveFullAuthenticatedUser(){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        return userRepository.findByUsername((String) authentication.getPrincipal()).orElseThrow(()->new UsernameNotFoundException("No such user"));
     }
 }

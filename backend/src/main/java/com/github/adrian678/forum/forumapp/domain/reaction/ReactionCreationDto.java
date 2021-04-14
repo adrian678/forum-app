@@ -1,27 +1,19 @@
 package com.github.adrian678.forum.forumapp.domain.reaction;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public class ReactionCreationDto {
-    String type;
-    String userId;
-    String postId;
+    String reactionType;
 
-    public ReactionCreationDto(String type, String userId, String postId){
-        this.type = type;
-        this.userId = userId;
-        this.postId = postId;
+    @JsonCreator
+    public ReactionCreationDto(@JsonProperty("reactionType") String reactionType){
+        this.reactionType = reactionType;
     }
 
-    public String getType() {
-        return type;
+    public String getReactionType() {
+        return reactionType;
     }
 
-    public String getUserId() {
-        return userId;
-    }
-
-
-    public String getPostId() {
-        return postId;
-    }
 
 }

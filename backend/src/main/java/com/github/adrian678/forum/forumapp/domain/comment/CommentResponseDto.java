@@ -10,7 +10,7 @@ public class CommentResponseDto extends RepresentationModel<CommentResponseDto> 
     PostId postId;
     CommentId commentId;
     CommentId parentCommentId;
-    UserId author;
+    String author;
     String content;
     Instant createdAt;
     int points;
@@ -18,7 +18,7 @@ public class CommentResponseDto extends RepresentationModel<CommentResponseDto> 
     boolean isSavedByUser;
 
     public CommentResponseDto(PostId postId, CommentId commentId, CommentId parentCommentId,
-                              UserId author, String content, Instant createdAt, int points){
+                              String author, String content, Instant createdAt, int points){
         this.postId = postId;
         this.commentId = commentId;
         this.parentCommentId = parentCommentId;
@@ -47,7 +47,7 @@ public class CommentResponseDto extends RepresentationModel<CommentResponseDto> 
         return parentCommentId;
     }
 
-    public UserId getAuthor() {
+    public String getAuthor() {
         return author;
     }
 

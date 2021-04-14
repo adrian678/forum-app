@@ -10,9 +10,13 @@ public class LikePostReaction implements Reaction {
 
     @Id
     PostReactionId postReactionId;
+    PostId postId;
+    String username;
 
-    public LikePostReaction(PostId postId, UserId userId){
-        this.postReactionId = new PostReactionId(postId, userId);
+    public LikePostReaction(PostId postId, String username){
+        this.postReactionId = new PostReactionId(postId, username);
+        this.postId = postId;
+        this.username = username;
     }
 
     @Override
@@ -32,6 +36,30 @@ public class LikePostReaction implements Reaction {
 
     @Override
     public boolean isNegative() {
+        return false;
+    }
+
+    public PostReactionId getPostReactionId() {
+        return postReactionId;
+    }
+
+    //TODO remove getUsername and getPostId?
+    @Override
+    public String getUsername() {
+        return username;
+    }
+
+    @Override
+    public PostId getPostId() {
+        return postId;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if(obj instanceof  LikePostReaction){
+            LikePostReaction reaction = (LikePostReaction) obj;
+            return reaction.getPostReactionId().equals(postReactionId);
+        }
         return false;
     }
 }

@@ -54,7 +54,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         //TODO add claims
             .claim("authorities", authResult.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.toList()))
             .setIssuedAt(Date.from(issuedAt))
-            .setExpiration(Date.from(issuedAt.plus(15, ChronoUnit.MINUTES)))
+            .setExpiration(Date.from(issuedAt.plus(1, ChronoUnit.DAYS)))
             .signWith(key)
             .compact();
             //Check if the route is available to users/admin/whoever

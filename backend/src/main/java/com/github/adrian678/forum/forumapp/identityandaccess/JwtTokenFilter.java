@@ -44,6 +44,11 @@ public class JwtTokenFilter extends OncePerRequestFilter {
                 .parseClaimsJws(token).getBody();
         } catch (JwtException ex) {
             //TODO figure out what to put if this fails. Is there an invalid credentials exception?
+            System.out.println("JWT exception occurred");
+            System.out.println(ex.getMessage());
+            filterChain.doFilter(request, response);
+            return;
+            //TODO what to do when token is expired?
         }
         //TODO convert claims to authorities and pass them into an Authentication?
 
@@ -56,7 +61,10 @@ public class JwtTokenFilter extends OncePerRequestFilter {
                     .map(SimpleGrantedAuthority::new)
                     .collect(Collectors.toList()));
             SecurityContextHolder.getContext().setAuthentication(auth);
+
+
         }
+        filterChain.doFilter(request, response);
 
     }
 }

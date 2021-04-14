@@ -2,6 +2,7 @@ package com.github.adrian678.forum.forumapp.domain.comment;
 
 import com.github.adrian678.forum.forumapp.domain.post.Post;
 import com.github.adrian678.forum.forumapp.domain.post.PostId;
+import com.github.adrian678.forum.forumapp.domain.user.User;
 import com.github.adrian678.forum.forumapp.domain.user.UserId;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -20,24 +21,23 @@ public class Comment {
 
     private CommentId parentCommentId;
 
-    UserId author;
+    String author;
     @NonNull
     String content;
     @NonNull
-    private Instant createdAt; //TODO change to Instant from Java 8 DateTIme api
+    private Instant createdAt;
     @NonNull
     private int points;
 
     private String boardName;
 
     private boolean removed;
-    //TODO comment should contain a field 'removed' corresponding to whether or not the comment has been removed by user/mod/admin
 
-    private Comment(CommentId cid, PostId parentPostId, CommentId parentComment, UserId author,
+    private Comment(CommentId cid, PostId parentPostId, CommentId parentCommentId, String author,
                     String content, Instant createdAt, int points, String boardName, boolean removed){
         this.cid = cid;
         this.parentPostId = parentPostId;
-        this.parentCommentId = parentComment;
+        this.parentCommentId = parentCommentId;
         this.author = author;
         this.content = content;
         this.createdAt = createdAt;
@@ -46,8 +46,8 @@ public class Comment {
         this.removed = removed;
     }
 
-    public static Comment create(Post post, CommentId parentComment, UserId author, String content){
-        return new Comment(CommentId.randomId(), post.getpId(), parentComment, author,
+    public static Comment create(Post post, CommentId parentComment, User author, String content){
+        return new Comment(CommentId.randomId(), post.getpId(), parentComment, author.getUsername(),
                 content, Instant.now(), 1, post.getBoardName(), false);
     }
 
@@ -63,7 +63,7 @@ public class Comment {
         return parentCommentId;
     }
 
-    public UserId getAuthor() {
+    public String getAuthor() {
         return author;
     }
 

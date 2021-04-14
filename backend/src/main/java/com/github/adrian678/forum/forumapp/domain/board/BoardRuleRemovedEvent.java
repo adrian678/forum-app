@@ -1,24 +1,26 @@
-package com.github.adrian678.forum.forumapp.domain.user;
+package com.github.adrian678.forum.forumapp.domain.board;
 
 import com.github.adrian678.forum.forumapp.domain.DomainEvent;
 import com.github.adrian678.forum.forumapp.domain.EventId;
-import org.springframework.context.ApplicationEvent;
 
 import java.time.Instant;
 
-public class UserCreatedEvent extends DomainEvent {
-    String eventType = "user created";
+public class BoardRuleRemovedEvent extends DomainEvent {
+
+    String eventType= "board rule removed";
     String details;
     Instant occurredAt;
     EventId identity;
-    User user;
+    Board board;
+    String rule;
 
-    public UserCreatedEvent(Object source, Instant occurredAt, EventId identity, User user){
+    public BoardRuleRemovedEvent(Object source, Instant occurredAt, EventId identity, Board board, String rule){
         super(source);
-        this.details = "user created with username" + user.getUsername();
+        this.details = "rule removed from to board: \'" + board.getTopic();
         this.occurredAt = occurredAt;
         this.identity = identity;
-        this.user = user;
+        this.board = board;
+        this.rule = rule;
     }
 
     @Override
@@ -39,5 +41,13 @@ public class UserCreatedEvent extends DomainEvent {
     @Override
     public EventId getIdentity() {
         return identity;
+    }
+
+    public Board getBoard() {
+        return board;
+    }
+
+    public String getRule() {
+        return rule;
     }
 }

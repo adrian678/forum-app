@@ -1,24 +1,24 @@
-package com.github.adrian678.forum.forumapp.domain.user;
+package com.github.adrian678.forum.forumapp.domain.report;
 
 import com.github.adrian678.forum.forumapp.domain.DomainEvent;
 import com.github.adrian678.forum.forumapp.domain.EventId;
-import org.springframework.context.ApplicationEvent;
 
 import java.time.Instant;
 
-public class UserCreatedEvent extends DomainEvent {
-    String eventType = "user created";
+public class ReportCreatedEvent extends DomainEvent {
+    String eventType = "report created";
     String details;
     Instant occurredAt;
     EventId identity;
-    User user;
+    Report report;
 
-    public UserCreatedEvent(Object source, Instant occurredAt, EventId identity, User user){
+    //TODO refactor
+    public ReportCreatedEvent(Object source, Instant occurredAt, EventId identity, Report report){
         super(source);
-        this.details = "user created with username" + user.getUsername();
+        this.details = " report of category " + report.getType() + "created with ID" + report.getReportId();
         this.occurredAt = occurredAt;
         this.identity = identity;
-        this.user = user;
+        this.report = report;
     }
 
     @Override
@@ -31,6 +31,7 @@ public class UserCreatedEvent extends DomainEvent {
         return details;
     }
 
+    //TODO create getter method for occuredAt, for Jackson serializations
     @Override
     public Instant occurredAt() {
         return occurredAt;
@@ -39,5 +40,9 @@ public class UserCreatedEvent extends DomainEvent {
     @Override
     public EventId getIdentity() {
         return identity;
+    }
+
+    public Report getReport() {
+        return report;
     }
 }

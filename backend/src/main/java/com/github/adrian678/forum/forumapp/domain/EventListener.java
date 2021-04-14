@@ -15,4 +15,6 @@ public class EventListener {
 //        System.out.println("event received by listener");
         eventRepository.save(event);
     }
+
+    //TODO write an event listener for BoardCreatedEvent to save the change to the User?
 }
