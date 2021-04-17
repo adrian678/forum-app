@@ -20,7 +20,7 @@ node {
         }
     }
 
-    stage('build frontend){
+    stage('build frontend'){
         dir("frontend"){
             def dockerfile = 'frontend.Dockerfile'
             def imageName = 'adrian678/forum-frontend'
