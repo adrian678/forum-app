@@ -1,0 +1,74 @@
+@import "Variables.css"; /*Do I need to import this?*/
+button {
+    box-shadow: 0 0 4px black;
+    font-weight: 700;
+    border-radius: 8%; /*consider moving this into a button-rounded element*/
+}
+
+/* colors */
+
+.button--red {
+    background-color: var(--red);
+    color: white;
+}
+
+.button--inv-red {
+    background-color: hsl(7, 74%, 50%);
+    color: white;
+}
+
+.button--blue {
+    background-color:hsl(hue, saturation, lightness);
+    color: white;
+}
+
+.button--inv-blue {
+    background-color: white;
+    color: var(--my-blue);
+    border: 2px solid var(--my-blue);
+}
+
+.button--aqua {
+    background-color: var(--aqua);
+    outline: #0a4881;
+    color: white;
+}
+
+.button--inv-aqua {
+    background-color: white;
+    color: var(--my-aqua);
+    border: 2px solid var(--aqua);
+}
+
+.button--pink {
+    background-color: white;
+    color: var(--my-pink);
+    border: 2px solid var(--my-pink);
+}
+
+.button--inv-pink {
+    background-color:var(--my-pink);
+    color: white;
+}
+
+.button--black-pink{
+    background-color: var(--my-black);
+    color: var(--my-pink);
+    border: 2px solid var(--my-pink);
+}
+/* size */
+.button--small{
+    padding: 0.2em 0.5em;
+    font-size: 1.0em;
+}
+
+.button--med{
+    padding: 0.2em 0.5em;
+    font-size: 1.3em;
+}
+
+.button--large{
+    padding: 0.2em 0.5em;
+    font-size: 1.6em;
+    letter-spacing: .1em;
+}

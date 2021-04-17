@@ -35,6 +35,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
+        System.out.println("Authentication attempted");
         try{
             CreateUserRequestDto dto = new ObjectMapper().readValue(request.getInputStream(), CreateUserRequestDto.class);
             return authenticationManager.authenticate(

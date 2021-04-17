@@ -15,8 +15,21 @@ node {
     }
 
     stage('Push backend image') {
-        /* comment for commit */
         docker.withRegistry('https://registry.hub.docker.com/adrian678/forum-backend', '4a008ea4-cdaa-4b92-87fe-9123383f6e4e') {
+            app.push("latest")
+        }
+    }
+
+    stage('build frontend){
+        dir("frontend"){
+            def dockerfile = 'frontend.Dockerfile'
+            def imageName = 'adrian678/forum-frontend'
+            app = docker.build("${imageName}", " -f ${dockerfile} .")
+        }
+    }
+
+    stage('Push frontend image') {
+        docker.withRegistry('https://registry.hub.docker.com/adrian678/forum-frontend', '4a008ea4-cdaa-4b92-87fe-9123383f6e4e') {
             app.push("latest")
         }
     }

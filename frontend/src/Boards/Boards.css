@@ -1,0 +1,12 @@
+.board-container{
+    margin: 2em auto 0;
+    /* margin-top: 2em; */
+    /* width: min(400px, 70%); */
+    width: max(400px, 70%);
+    background-color: hsla(0, 0%, 100%, 80%);
+    /* padding-top: 2.5em; */
+}
+
+.board-page{
+    background-color: hsla(240, 10%, 76%, 50%);
+}

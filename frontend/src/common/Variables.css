@@ -1,0 +1,22 @@
+:root {
+    --main-bg-color: dimgrey;
+    --secondary-bg-color: #c46060;
+    --font-fam: 'Roboto', Arial, Helvetica, sans-serif;
+    --main-font-size: 1.5vw;
+    --decoration: none;
+    --my-red:  hsl(7, 74%, 50%);
+    --my-orange: hsl(18, 99%, 53%);
+    --my-yellow:hsl(48, 72%, 53%);
+    --my-green:	hsl(122, 39%, 49%);
+    --my-blue: hsl(210, 88%, 46%);
+    --my-indigo:hsl(230, 99%, 50%);
+    --my-violet:hsl(263, 96%, 50%);
+    --my-pink:hsl(304, 95%, 58%);
+    --my-black:hsl(232, 98%, 4%);
+    --my-cool-gray:hsl(0, 0%, 46%);
+    --my-warm-gray:  hsl(11, 1%, 33%);
+    --my-pale: hsl(0, 0%, 93%);
+    --my-brown: 	hsl(0, 15%, 19%);
+    --my-blue-faded: 	hsl(226, 66%, 55%);
+    --my-aqua:  hsl(209, 86%, 27%);
+}

@@ -1,0 +1,20 @@
+.Comment{
+    border: 2px solid green;
+}
+
+.Comment__header{
+    display: flex;
+    justify-content: space-between;
+    border: 2px solid green;
+    align-items: baseline;
+}
+
+.Comment__details{
+    display: flex;
+    align-items: baseline;
+    border: 2px solid black;
+}
+
+.Comment_contnet{
+    border: 2px solid green;
+}

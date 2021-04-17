@@ -22,21 +22,22 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
 //        super.configure(http);
         http
-
-                .httpBasic().disable()
-                .csrf().disable()
-                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                .and()
-                .authorizeRequests()
-                .mvcMatchers("/sign-up").permitAll()
-                .mvcMatchers("/me/**").authenticated()
+            .authorizeRequests()
+            .anyRequest().permitAll()
+//            .mvcMatchers("/sign-up").permitAll()
+//            .mvcMatchers("/me/**").authenticated()
 //                .anyRequest().permitAll()
 //                .antMatchers("/sign-up").permitAll()
 //                .anyRequest().authenticated()
-                .and()
-                .anonymous().disable()
-                .addFilter(new JwtAuthenticationFilter(authenticationManager()))
-                .addFilterAfter(new JwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
+            .and()
+            .cors().and().csrf().disable()
+            .httpBasic().disable() //TODO is this enabled by default
+            .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+            .and()
+//            .anonymous().disable()
+//                TODO try changing filters to addBefore? add JWTAuth before UsernamePassword filter?
+            .addFilter(new JwtAuthenticationFilter(authenticationManager()))
+            .addFilterBefore(new JwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
 
 
 //                .and()
@@ -47,4 +48,5 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
 
     }
+
 }

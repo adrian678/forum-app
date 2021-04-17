@@ -1,0 +1,9 @@
+form {
+    border: none;
+    padding: 0.5em;
+    letter-spacing: 0.1em;
+}
+
+.form__input{
+    padding: 0.2em 0.1em;
+}

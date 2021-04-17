@@ -1,0 +1,9 @@
+.PostPage{
+    background-color: hsla(240, 10%, 76%, 50%);
+}
+
+.post-container{
+    margin: 2em auto 0;
+    width: max(400px, 70%);
+    background-color: hsla(0, 0%, 100%, 80%);
+}

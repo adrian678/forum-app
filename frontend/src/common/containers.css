@@ -1,0 +1,6 @@
+.container--glass{
+    filter: blur(6px);
+    display: inherit;
+    /* height: 100%; */
+    /* width: 100%; */
+}

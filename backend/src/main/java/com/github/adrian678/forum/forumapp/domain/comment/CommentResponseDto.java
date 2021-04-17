@@ -17,6 +17,8 @@ public class CommentResponseDto extends RepresentationModel<CommentResponseDto> 
     boolean isLikedByUser;
     boolean isSavedByUser;
 
+    //TODO add timestamp/createdAt
+
     public CommentResponseDto(PostId postId, CommentId commentId, CommentId parentCommentId,
                               String author, String content, Instant createdAt, int points){
         this.postId = postId;

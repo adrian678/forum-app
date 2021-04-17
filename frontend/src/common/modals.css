@@ -1,0 +1,21 @@
+.modal-outer{
+    position: fixed; /*was absolute*/
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.25);
+}
+
+.post-modal-inner{
+    position: absolute;
+    top: 5%;
+    left: 10%;
+    right: 10%;
+    bottom: 5%;
+    border: 2px solid green;
+    padding: 1em 2em;
+    background-color: rgba(206, 207, 207, 0.904);
+    border-radius: 2em;
+    
+}

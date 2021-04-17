@@ -1,10 +1,12 @@
 package com.github.adrian678.forum.forumapp.domain.comment;
 
 import com.github.adrian678.forum.forumapp.domain.EventId;
+import com.github.adrian678.forum.forumapp.domain.Utils;
 import com.github.adrian678.forum.forumapp.domain.board.Board;
 import com.github.adrian678.forum.forumapp.domain.board.BoardNotFoundException;
 import com.github.adrian678.forum.forumapp.domain.board.BoardRepository;
 import com.github.adrian678.forum.forumapp.domain.post.Post;
+import com.github.adrian678.forum.forumapp.domain.post.PostId;
 import com.github.adrian678.forum.forumapp.domain.post.PostNotFoundException;
 import com.github.adrian678.forum.forumapp.domain.post.PostRepository;
 import com.github.adrian678.forum.forumapp.domain.report.CommentReport;
@@ -16,6 +18,8 @@ import com.github.adrian678.forum.forumapp.domain.user.UserRepository;
 import com.github.adrian678.forum.forumapp.identityandaccess.Role;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.IanaLinkRelations;
 import org.springframework.http.HttpStatus;
@@ -34,6 +38,7 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @RestController
+@CrossOrigin(origins = "*", allowedHeaders = "*")
 public class CommentController {
 
     @Autowired
@@ -63,6 +68,27 @@ public class CommentController {
     public CommentResponseDto one(@PathVariable String commentId){
         Comment comment = commentRepository.findById(CommentId.fromString(commentId)).orElseThrow(()-> new CommentNotFoundException("no such comment"));
         return commentModelAssembler.toModel(comment);
+    }
+
+    @GetMapping("/posts/{postId}/comments")
+    public CollectionModel<?> getPostComments(
+            @PathVariable String postId,
+            @RequestParam(defaultValue = "0")  int page,
+            @RequestParam(defaultValue = "10") int limit,
+            @RequestParam(defaultValue = "null") String sort) {
+        PageRequest request = Utils.createPageRequestFromParams(page, limit, sort);
+        Page<Comment> comments = commentRepository.findByParentPostId(PostId.fromString(postId), request);
+        List<CommentResponseDto> dtos = comments.stream().map(commentModelAssembler::toModel).collect(Collectors.toList());
+        int previousPage = page - 1;
+        int nextPage = page + 1;
+        CollectionModel<?> response = CollectionModel.of(dtos);
+        if(comments.hasPrevious()){
+            response.add(linkTo(methodOn(CommentController.class).getPostComments(postId, previousPage, limit, sort)).withRel("previous"));
+        }
+        if(comments.hasNext()){
+            response.add(linkTo(methodOn(CommentController.class).getPostComments(postId, nextPage, limit, sort)).withRel("next"));
+        }
+        return response;
     }
 
     @PreAuthorize(Role.HAS_ROLE_BASIC_USER_EXPR)
