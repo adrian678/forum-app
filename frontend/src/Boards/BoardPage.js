@@ -1,5 +1,5 @@
 import React, { useContext, useState, useEffect } from "react";
-import {useParams} from "react-router-dom";
+import {useParams, Link, useLocation} from "react-router-dom";
 import {AuthContext} from "../Authentication/AuthContext";
 import axios from "axios";
 //   components
@@ -12,9 +12,9 @@ import "./Boards.css";
 export default function Board(props){
 
     const [posts, setPosts] = useState([]);
-    const [dummyTitle, setDummytitle] = useState("boardName");
     const auth = useContext(AuthContext);
     const {boardName} = useParams();
+    let location = useLocation();
     console.log(boardName);
     let fetchPosts = ()=>{
         let headers = null;
@@ -50,7 +50,17 @@ export default function Board(props){
                 {posts.map((post)=>{
                     return(
                         //TODO Need to validate whether post is empty
-                       <PostPreview key={post.postId.uuid} author={post.author} title={post.title} postId={post.postId.uuid}/>
+                        <Link key={post.postId.uuid} to={{pathname: `/posts/${post.postId.uuid}`, 
+                        state: {
+                          background : location,
+                          pid: post.postId.uuid,
+                          title: post.title,
+                          user: post.author,
+                          content: post.content
+                        },}}>
+                          <PostPreview key={post.postId.uuid} author={post.author} title={post.title} postId={post.postId.uuid}/>
+                        </Link>
+                       
                     )
                 })}
             </div>

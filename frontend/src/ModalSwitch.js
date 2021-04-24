@@ -4,6 +4,7 @@ import Signup from "./Authentication/Signup";
 import BoardPage from "./Boards/BoardPage";
 import PostPage from "./Posts/PostPage";
 import PostModal from "./Posts/PostModal";
+import BoardRouter from "./Boards/BoardRouter"
 
 export default function ModalSwitch() {
   let location = useLocation();
@@ -14,12 +15,12 @@ export default function ModalSwitch() {
       <Switch location={background || location}>
 
         <Route path="/signup" children={<Signup/>}/>
-        <Route path="/boards/:boardName" children={<BoardPage/>}/>
+        <Route path="/boards/:boardName" children={<BoardRouter/>}/>
         <Route path="/posts/:postId" children={<PostPage/>}/>
         {/* <Route component={Error}/> */}  {/* Write Error component */}
 
       </Switch>
-      {background &&  <Route path="/posts/:id" children={<PostModal/>} />}
+      {background &&  <Route path="/posts/:postId" children={<PostModal/>} />}
     </div>
   )
 }

@@ -19,3 +19,9 @@ services:
       - DB_SERVER=db
       - forum_secret_key=placeholder
     
+  frontend:
+    build:
+      context: frontend
+      dockerfile: frontend.Dockerfile
+    ports:
+      - 5000:5000

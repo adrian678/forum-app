@@ -35,13 +35,13 @@ public class User implements UserDetails {
 
     private List<CommentId> savedComments;  //TODO check if there is potential concurrency issue/exploit
 
-    private List<UserId> blockedUsers;
+    private List<UserId> blockedUsers;      //TODO change to String usernames instead of UserId
 
     private List<String> subscribedBoards;
 
     private List<String> authorities;
 
-    private List<UserId> followedUsers;
+    private List<UserId> followedUsers;     //TODO change from userId to String for holding usernames
 
     private List<Ban> bans;
 
@@ -81,6 +81,7 @@ public class User implements UserDetails {
     }
 
     public static User createNewUser(String username, String password, String email){
+        //TODO create validation methods for provided arguments
         return new User(UserId.getInstance(), username, password, email, Instant.now(),true, true,
                 true, true,true, new ArrayList<PostId>(),
                 new ArrayList<CommentId>(), new ArrayList<UserId>(), new ArrayList<String>(), new ArrayList<String>(), new ArrayList<UserId>(), new ArrayList<Ban>());
@@ -155,6 +156,7 @@ public class User implements UserDetails {
         return isEnabled;
     }
 
+    //TODO should the save/Remove Post and save/remove Comment methods take the whold domain object (Post/Comment) as arg or just ID?
     public void saveNewPost(PostId postId){
         savedPosts.add(postId);
     }
@@ -180,8 +182,19 @@ public class User implements UserDetails {
         //TODO check that the list can handle a new insertion
     }
 
+    public boolean hasBlockedUser(User user){
+        return blockedUsers.contains(user.getUsername());
+    }
+
     public void followUser(User user){
         followedUsers.add(user.getId());
+    }
+
+    public boolean hasFollowedUser(User user){
+        if(null == user){
+            throw new IllegalArgumentException("Null reference provided to hasFollowedUser method");
+        }
+        return followedUsers.contains(user.getUsername());
     }
 
 
@@ -189,6 +202,13 @@ public class User implements UserDetails {
         subscribedBoards.add(boardName);
         //TODO decide on the return type of this. Perhaps return a copy of the list of subscriptions on success?
         //TODO consider changing subscription list to a concurrent list
+    }
+
+    public boolean hasSubscribedTo(String boardName){
+        if(null == boardName){
+            throw new IllegalArgumentException("null reference provided to hasSubscribedTo method");
+        }
+        return subscribedBoards.contains(boardName);
     }
 
     public List<PostId> getSavedPosts() {

@@ -12,9 +12,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.IanaLinkRelations;
+import org.springframework.hateoas.Link;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -22,6 +24,8 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -51,9 +55,23 @@ public class BoardController {
     }
 
     @GetMapping(value="/boards/{boardName}")
-    public BoardResponseDto one(@PathVariable String boardName){
+    public ResponseEntity<?> one(@PathVariable String boardName){
         Board board = boardRepository.findById(boardName).orElseThrow(()-> new BoardNotFoundException("no such board"));
-        return boardModelAssembler.toModel(board);
+        BoardResponseDto model = boardModelAssembler.toModel(board);
+        model.add(linkTo(methodOn(BoardController.class).all()).withRel("all boards"));
+        model.add(Link.of("/boards/{boardName}/reports").withRel("report"));
+
+        //if unauthenticated, no more links necessary
+        if(SecurityContextHolder.getContext().getAuthentication() instanceof AnonymousAuthenticationToken){
+            return ResponseEntity.ok(model);
+        }
+        User authenticatedUser = retrieveFullAuthenticatedUser();
+        //moderator specific links
+        if(board.hasModeratorByName(authenticatedUser.getUsername())){
+            model.add(linkTo(methodOn(BoardController.class).replaceRules(boardName, board.getRules())).withRel("replace rules"));
+            model.add(Link.of("/boards/{boardName}/moderators").withRel("moderators"));
+        }
+        return ResponseEntity.ok(model);
     }
 
     @PreAuthorize(Role.HAS_ROLE_BASIC_USER_EXPR)
@@ -77,6 +95,19 @@ public class BoardController {
         publisher.publishEvent(new BoardCreatedEvent(this, Instant.now(), EventId.randomId(), savedBoard));
         BoardResponseDto model = boardModelAssembler.toModel(savedBoard);
         return ResponseEntity.created(model.getRequiredLink(IanaLinkRelations.SELF).toUri()).body(model);
+    }
+
+    @PreAuthorize(Role.HAS_ROLE_BASIC_USER_EXPR)
+    @PutMapping("/boards/{boardName}/rules")
+    public ResponseEntity<?> replaceRules(@RequestParam String boardName, @RequestBody List<String> newRules){
+        User admin = retrieveFullAuthenticatedUser();
+        Board board = boardRepository.findById(boardName).orElseThrow(()-> new BoardNotFoundException("no such board"));
+        if(board.getOwner().equals(admin.getUsername())){
+            board.replaceRules(newRules);
+            publisher.publishEvent(new BoardRulesReplacedEvent(this, Instant.now(), EventId.randomId(), board, new ArrayList<>(newRules)));
+            return ResponseEntity.ok().build(); //TODO find acceptable content to go in response
+        }
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
     }
 
     @PreAuthorize(Role.HAS_ROLE_BASIC_USER_EXPR)

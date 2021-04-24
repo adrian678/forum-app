@@ -45,10 +45,11 @@ export default function Signup(props){
             {/* TODO include a blur in the background of signup-form */}
             {/* <div className="container--glass"> */}
                 <form className="signup-form" onSubmit={postToLogin}>
-                    <input className="signup-form__input" onChange={handleUserChange} placeholder="username" type="text" name="username" required>
-
+                    <p>username</p>
+                    <input className="signup-form__input" onChange={handleUserChange}  type="text" name="username" required>
                     </input>
-                    <input className="signup-form__input" onChange={handlePasswordChange} placeholder="password" type="text" name="password" required>
+                    <p>password</p>
+                    <input className="signup-form__input" onChange={handlePasswordChange} type="text" name="password" required>
 
                     </input>
                     <button className="button--med button--pink" type="submit">

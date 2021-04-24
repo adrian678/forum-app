@@ -6,14 +6,14 @@ export default function PostPreview(props){
 
     return (
         <div className="PostPreview">
-            <Link to={"/posts/" + props.postId}>
+            {/* <Link to={"/posts/" + props.postId}> */}
             <h4>
                 {props.author}
             </h4>
             <h3>
                 {props.title}
             </h3>
-            </Link>
+            {/* </Link> */}
             
         </div>
     )

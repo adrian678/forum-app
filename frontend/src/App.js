@@ -3,7 +3,7 @@ import './App.css';
 import "./common/Variables.css";
 import {  BrowserRouter as Router} from "react-router-dom";
 import ModalSwitch from './ModalSwitch';
-import {anonymous, AuthContext} from "./Authentication/AuthContext" 
+import {AuthContext} from "./Authentication/AuthContext" 
 
 
 

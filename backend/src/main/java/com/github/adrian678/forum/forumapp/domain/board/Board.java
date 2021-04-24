@@ -134,6 +134,10 @@ public class Board {
         rules.remove(rule);
     }
 
+    public void replaceRules(List<String> rules){
+        this.rules = new ArrayList<>(rules);
+    }
+
     public boolean hasModeratorByName(String username){
         return moderators.contains(username);
     }
