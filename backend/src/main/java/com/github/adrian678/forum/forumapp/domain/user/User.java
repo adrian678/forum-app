@@ -11,23 +11,23 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.time.Instant;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 @Document
 public class User implements UserDetails {
 
+    static Pattern whiteSpacePattern = Pattern.compile("\\s");
+
     @NonNull
     private UserId uid;
-
     @NonNull
     private String username;
-
     @NonNull
     private String password;
-
     @NonNull
     private String email;
-
     @NonNull
     private Instant createdOn;
 
@@ -41,7 +41,7 @@ public class User implements UserDetails {
 
     private List<String> authorities;
 
-    private List<UserId> followedUsers;     //TODO change from userId to String for holding usernames
+    private List<String> followedUsers;     //TODO change from userId to String for holding usernames
 
     private List<Ban> bans;
 
@@ -56,11 +56,13 @@ public class User implements UserDetails {
 
     private boolean isEnabled;
 
+
+
     @PersistenceConstructor
     private User(UserId uid, String username, String password, String email, Instant createdOn, boolean isActive,
                  boolean isAccountNonExpired, boolean isAccountNonLocked, boolean isCredentialsNonExpired, boolean isEnabled,
                  List<PostId> savedPosts, List<CommentId> savedComments, List<UserId> blockedUsers, List<String> subscribedBoards,
-                 List<String> authorities, List<UserId> followedUsers, List<Ban> bans){
+                 List<String> authorities, List<String> followedUsers, List<Ban> bans){
         this.uid = uid;
         this.username = username;
         this.password = password;
@@ -82,9 +84,16 @@ public class User implements UserDetails {
 
     public static User createNewUser(String username, String password, String email){
         //TODO create validation methods for provided arguments
+        if(null == username || containsWhiteSpace(username) || username.isEmpty()){
+            throw new IllegalArgumentException("invalid username argument to createNewUser");
+        }
+        if(null == password || containsWhiteSpace(password) || password.isEmpty()){
+            throw new IllegalArgumentException("invalid password argument to createNewUser");
+        }
+
         return new User(UserId.getInstance(), username, password, email, Instant.now(),true, true,
                 true, true,true, new ArrayList<PostId>(),
-                new ArrayList<CommentId>(), new ArrayList<UserId>(), new ArrayList<String>(), new ArrayList<String>(), new ArrayList<UserId>(), new ArrayList<Ban>());
+                new ArrayList<CommentId>(), new ArrayList<UserId>(), new ArrayList<String>(), new ArrayList<String>(), new ArrayList<String>(), new ArrayList<Ban>());
     }
 
     @Override
@@ -158,6 +167,9 @@ public class User implements UserDetails {
 
     //TODO should the save/Remove Post and save/remove Comment methods take the whold domain object (Post/Comment) as arg or just ID?
     public void saveNewPost(PostId postId){
+        if(null == postId){
+            throw new IllegalArgumentException("null reference provided to saveNewPost call");
+        }
         savedPosts.add(postId);
     }
 
@@ -173,21 +185,31 @@ public class User implements UserDetails {
         savedComments.remove(commentId);
     }
 
-    public void blockUser(User userToBlock){
+    public boolean blockUser(User userToBlock){
         if(null == userToBlock){
-            return;
+            throw new IllegalArgumentException("null reference provided to block User call");
         }
-        blockedUsers.add(userToBlock.getId());
-        //TODO change ouutput type to something that can identify success or failure, like a boolean
-        //TODO check that the list can handle a new insertion
+        if(uid.equals(userToBlock.getUid())){
+            return false;
+            //TODO should this throw an exception?
+        }
+        //TODO ensure there are no duplicates; perhaps switch from list to Set?
+        return blockedUsers.add(userToBlock.getId());
     }
 
     public boolean hasBlockedUser(User user){
         return blockedUsers.contains(user.getUsername());
     }
 
-    public void followUser(User user){
-        followedUsers.add(user.getId());
+    public boolean followUser(User user){
+        if(null == user){
+            throw new IllegalArgumentException("null reference provided to followUser call");
+        }
+        //cannot follow self
+        if(uid.equals(user.getUid())){
+            return false;
+        }
+        return followedUsers.add(user.getUsername());
     }
 
     public boolean hasFollowedUser(User user){
@@ -198,10 +220,11 @@ public class User implements UserDetails {
     }
 
 
-    public void addSubscription(String boardName){
-        subscribedBoards.add(boardName);
-        //TODO decide on the return type of this. Perhaps return a copy of the list of subscriptions on success?
-        //TODO consider changing subscription list to a concurrent list
+    public boolean addSubscription(String boardName){
+        if(boardName == null){
+            throw new IllegalArgumentException("null reference provided to addSubscription cal");
+        }
+        return subscribedBoards.add(boardName);
     }
 
     public boolean hasSubscribedTo(String boardName){
@@ -219,15 +242,18 @@ public class User implements UserDetails {
         return authority.contains(authority);
     }
 
-    public void addRole(String role){ //TODO change return type to boolean
-        authorities.add(role);
+    public boolean addRole(String role){ //TODO change return type to boolean
+        if(null == role){
+            throw new IllegalArgumentException("null reference provided to addRole call");
+        }
+        return authorities.add(role);
     }
 
-    public void removeRole(String role){
-        authorities.remove(role);
+    public boolean removeRole(String role){
+        return authorities.remove(role);
     }
 
-    public List<UserId> getFollowedUsers() {
+    public List<String> getFollowedUsers() {
         return followedUsers;   //TODO return defensive copy?
     }
 
@@ -235,14 +261,15 @@ public class User implements UserDetails {
         return bans;
     }
 
-    public void addBan(Ban ban){
-        bans.add(ban); //TODO are bans immmutable?
-        //TODO change return type to boolean
+    public boolean addBan(Ban ban){
+        if(null == ban){
+            throw new IllegalArgumentException("null reference provided to addBan call");
+        }
+        return bans.add(ban); //TODO are bans immmutable?
     }
 
-    public void removeBan(Ban ban){
-        bans.remove(ban);
-        //TODO change return type to boolean
+    public boolean removeBan(Ban ban){
+        return bans.remove(ban);
     }
 
     public void deactivateBan(Ban ban){
@@ -259,5 +286,11 @@ public class User implements UserDetails {
 
     public Ban findBanById(UUID uuid){
         return bans.stream().filter(ban->ban.getUuid().equals(uuid)).findFirst().get();
+    }
+
+    private static boolean containsWhiteSpace(String sequence){
+        Matcher matcher = whiteSpacePattern.matcher(sequence);
+        return matcher.find();
+
     }
 }

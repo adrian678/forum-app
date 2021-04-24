@@ -25,6 +25,8 @@ public class UserTest {
         Throwable exception = assertThrows(IllegalArgumentException.class, ()-> User.createNewUser(nullUsername, password, email));
         String emptyUsername = "";
         exception = assertThrows(IllegalArgumentException.class, ()-> User.createNewUser(emptyUsername, password, email));
+        String whiteSpace = "   ";
+        exception = assertThrows(IllegalArgumentException.class, ()-> User.createNewUser(whiteSpace, password, email));
     }
 
     @Test
@@ -38,6 +40,8 @@ public class UserTest {
         Throwable exception = assertThrows(IllegalArgumentException.class, ()-> User.createNewUser(username, nullPassword, email));
         String emptyPassword = "";
         exception = assertThrows(IllegalArgumentException.class, ()-> User.createNewUser(username, emptyPassword, email));
+        String whiteSpace = "   ";
+        exception = assertThrows(IllegalArgumentException.class, ()-> User.createNewUser(username, whiteSpace, email));
     }
 
     @Test
@@ -79,7 +83,7 @@ public class UserTest {
         user.saveNewPost(validPostId);
         assert (user.getSavedPosts().size() == 1);
         user.removeSavedPost(validPostId);
-        assert (user.getSavedPosts().size() == 1);
+        assert (user.getSavedPosts().size() == 0);
     }
 
     @Test
@@ -87,6 +91,7 @@ public class UserTest {
             "when saveComment called," +
             "then commentId is added to savedComments list")
     public void saveNewCommentValidPostIdTest(){
+        //TODO update by having business logic use a Comment object instead of CommentId
         User user = User.createNewUser(validUsername, validPassword, validEmail);
         assert(user.getSavedComments().size() == 0);
         user.saveNewComment(validCommentId);

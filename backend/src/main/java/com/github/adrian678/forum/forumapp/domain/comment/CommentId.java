@@ -32,7 +32,7 @@ public class CommentId implements Serializable {
 
     @Override
     public boolean equals(Object obj) {
-        if(obj instanceof PostId){
+        if(obj instanceof CommentId){
             return uuid.equals(((CommentId) obj).uuid);
         }
         return false;
