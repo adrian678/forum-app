@@ -47,6 +47,12 @@ public class Comment {
     }
 
     public static Comment create(Post post, CommentId parentComment, User author, String content){
+        if(null == post){
+            throw new IllegalArgumentException("null reference provided as post argument to Comment.create()");
+        }
+        if(null == author){
+            throw new IllegalArgumentException("null reference provided as author argument to Comment.create()");
+        }
         return new Comment(CommentId.randomId(), post.getpId(), parentComment, author.getUsername(),
                 content, Instant.now(), 1, post.getBoardName(), false);
     }

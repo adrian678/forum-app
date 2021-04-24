@@ -9,6 +9,8 @@ import org.springframework.lang.NonNull;
 
 import java.time.Instant;
 
+import static com.github.adrian678.forum.forumapp.domain.Utils.containsWhiteSpace;
+
 //import java.util.Date;
 
 
@@ -47,6 +49,17 @@ public class Post {
     }
 
     public static Post createPost(String author, String boardName, String title, String content){
+        //TODO should these use domain objects instead of Strings/ids
+        if(null == author){
+            throw new IllegalArgumentException("Invalid author provided to createPost call");
+        }
+        if(null == boardName){
+            throw new IllegalArgumentException("Invalid board provided to createPost call");
+        }
+
+        if(null == title || containsWhiteSpace(title)){
+            throw new IllegalArgumentException("Invalid title provided to createPost call");
+        }
         return new Post(PostId.randomId(), author, boardName, 1, title, content, Instant.now(), false);
     }
 

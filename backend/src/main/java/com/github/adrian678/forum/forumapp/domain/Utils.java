@@ -5,8 +5,18 @@ import org.springframework.data.domain.Sort;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class Utils {
+
+    static Pattern whiteSpacePattern = Pattern.compile("\\s");
+
+    public static boolean containsWhiteSpace(String sequence){
+        Matcher matcher = whiteSpacePattern.matcher(sequence);
+        return matcher.find();
+
+    }
 
     public static PageRequest createPageRequestFromParams(int page, int limit, String sort){
         if(null == sort || "" == sort){

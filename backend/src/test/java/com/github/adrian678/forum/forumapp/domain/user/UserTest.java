@@ -90,7 +90,7 @@ public class UserTest {
     @DisplayName("Given valid commentId," +
             "when saveComment called," +
             "then commentId is added to savedComments list")
-    public void saveNewCommentValidPostIdTest(){
+    public void saveNewCommentValidCommentIdTest(){
         //TODO update by having business logic use a Comment object instead of CommentId
         User user = User.createNewUser(validUsername, validPassword, validEmail);
         assert(user.getSavedComments().size() == 0);

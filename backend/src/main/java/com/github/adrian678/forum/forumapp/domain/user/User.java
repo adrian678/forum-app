@@ -15,10 +15,11 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+import static com.github.adrian678.forum.forumapp.domain.Utils.containsWhiteSpace;
+
 @Document
 public class User implements UserDetails {
 
-    static Pattern whiteSpacePattern = Pattern.compile("\\s");
 
     @NonNull
     private UserId uid;
@@ -288,9 +289,5 @@ public class User implements UserDetails {
         return bans.stream().filter(ban->ban.getUuid().equals(uuid)).findFirst().get();
     }
 
-    private static boolean containsWhiteSpace(String sequence){
-        Matcher matcher = whiteSpacePattern.matcher(sequence);
-        return matcher.find();
 
-    }
 }
