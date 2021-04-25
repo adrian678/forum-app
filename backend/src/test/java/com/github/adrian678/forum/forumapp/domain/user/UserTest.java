@@ -108,9 +108,9 @@ public class UserTest {
     public void removeSavedCommentValidCommentIdMemberTest(){
         User user = User.createNewUser(validUsername, validPassword, validEmail);
         user.saveNewComment(validCommentId);
-        assert (user.getSavedPosts().size() == 1);
+        assert (user.getSavedComments().size() == 1);
         user.removeSavedComment(validCommentId);
-        assert (user.getSavedPosts().size() == 1);
+        assert (user.getSavedComments().size() == 0);
     }
 
     @Test
@@ -140,8 +140,8 @@ public class UserTest {
     public void followUserValidUserTest(){
         User user = User.createNewUser(validUsername, validPassword, validEmail);
         User userToFollow = User.createNewUser("userToFollow", validPassword, validEmail);
-        user.followUser(user);
-
+        user.followUser(userToFollow);
+        assert(user.getFollowedUsers().contains(userToFollow.getUsername()));
     }
 
     @Test

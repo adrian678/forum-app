@@ -11,8 +11,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.time.Instant;
 import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import static com.github.adrian678.forum.forumapp.domain.Utils.containsWhiteSpace;
@@ -94,7 +92,7 @@ public class User implements UserDetails {
 
         return new User(UserId.getInstance(), username, password, email, Instant.now(),true, true,
                 true, true,true, new ArrayList<PostId>(),
-                new ArrayList<CommentId>(), new ArrayList<UserId>(), new ArrayList<String>(), new ArrayList<String>(), new ArrayList<String>(), new ArrayList<Ban>());
+                new ArrayList<CommentId>(), new ArrayList<UserId>(), new ArrayList<String>(), new ArrayList<String>(), new ArrayList<String>(), new ArrayList<>());
     }
 
     @Override
@@ -191,15 +189,15 @@ public class User implements UserDetails {
             throw new IllegalArgumentException("null reference provided to block User call");
         }
         if(uid.equals(userToBlock.getUid())){
-            return false;
-            //TODO should this throw an exception?
+            throw new IllegalArgumentException("User cannot block self. Same user provided as arugment to blockUser");
         }
         //TODO ensure there are no duplicates; perhaps switch from list to Set?
         return blockedUsers.add(userToBlock.getId());
     }
 
+    //TODO change to use String usernames instead of UserId
     public boolean hasBlockedUser(User user){
-        return blockedUsers.contains(user.getUsername());
+        return blockedUsers.contains(user.getUid());
     }
 
     public boolean followUser(User user){
@@ -208,7 +206,7 @@ public class User implements UserDetails {
         }
         //cannot follow self
         if(uid.equals(user.getUid())){
-            return false;
+            throw new IllegalArgumentException("user cannot follow self. Same user provided as argument to followUser");
         }
         return followedUsers.add(user.getUsername());
     }
@@ -259,7 +257,7 @@ public class User implements UserDetails {
     }
 
     public List<Ban> getBans() {
-        return bans;
+        return Collections.unmodifiableList(bans);
     }
 
     public boolean addBan(Ban ban){
@@ -273,21 +271,20 @@ public class User implements UserDetails {
         return bans.remove(ban);
     }
 
-    public void deactivateBan(Ban ban){
-        for(Ban oldBan : bans){
-            if(oldBan.equals(ban)){
-                oldBan.deactivate();
-            }
-        }
-    }
 
     public boolean isBannedFromBoard(String boardName){
-        return !bans.stream().filter(ban->ban.isActive() && ban.getBoardName().equals(boardName)).collect(Collectors.toList()).isEmpty();
+        for(Ban ban : bans){
+            if(ban.isActive()){
+                return true;
+            }
+        }
+        return false;
+//        return !bans.stream().filter(ban->ban.isActive() && ban.getBoardName().equals(boardName)).collect(Collectors.toList()).isEmpty();
     }
 
-    public Ban findBanById(UUID uuid){
-        return bans.stream().filter(ban->ban.getUuid().equals(uuid)).findFirst().get();
-    }
+//    public Ban findBanById(UUID uuid){
+//        return bans.stream().filter(ban->ban.getUuid().equals(uuid)).findFirst().get();
+//    }
 
 
 }

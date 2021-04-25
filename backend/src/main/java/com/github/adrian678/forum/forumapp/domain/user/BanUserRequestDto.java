@@ -6,12 +6,14 @@ public class BanUserRequestDto {
     private Instant startTime;
     private Instant endTime;
     private String bannedUser;
+    private String issuerName;
     private String boardName;
 
-    public BanUserRequestDto(Instant startTime, Instant endTime, String bannedUser, String boardName){
+    public BanUserRequestDto(Instant startTime, Instant endTime, String bannedUser, String issuerName, String boardName){
         this.startTime = startTime;
         this.endTime = endTime;
         this.bannedUser = bannedUser;
+        this.issuerName = issuerName;
         this.boardName = boardName;
     }
 
@@ -29,5 +31,9 @@ public class BanUserRequestDto {
 
     public String getBoardName() {
         return boardName;
+    }
+
+    public String getIssuerName() {
+        return issuerName;
     }
 }

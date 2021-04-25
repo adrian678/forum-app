@@ -1,19 +1,52 @@
 package com.github.adrian678.forum.forumapp.domain.user;
 
-import java.io.Serializable;
 import java.time.Instant;
-import java.util.Date;
-import java.util.UUID;
+import java.util.Objects;
 
-public interface Ban extends Serializable {
+public class Ban{
+    DateRange dateRange;
+    String issuerName;
+    String boardName;
 
-    Instant getStartTime(); //TODO see pros and cons of using Date vs long or other time format
-    boolean isPermanent();
-    boolean isActive();
-    void deactivate();
-    String getIssuer();
-    String getBoardName();
-    UUID getUuid();
+    public Ban(DateRange dateRange,  String issuerName, String boardName){
+        this.dateRange = dateRange;
+        this.issuerName = issuerName;
+        this.boardName = boardName;
+    }
 
-    //TODO Users should have a list of bans. Perhaps Bans should be incorporated into user package?
+    public static Ban createPermanent(String issuerName, String boardName){
+        return new Ban(new DateRange(Instant.now(), Instant.MAX), issuerName, boardName);
+    }
+
+
+    public DateRange getDateRange() {
+        return dateRange;
+    }
+
+    public boolean isActive() {
+        return dateRange.includes(Instant.now());
+    }
+
+    public String getIssuerName() {
+        return issuerName;
+    }
+
+    public String getBoardName() {
+        return boardName;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if(obj instanceof Ban){
+            Ban otherBan = (Ban) obj;
+            return dateRange.equals(otherBan.getDateRange()) && issuerName.equals(otherBan.getIssuerName()) && boardName.equals(otherBan.getBoardName());
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(dateRange, issuerName, boardName);
+    }
 }
+

@@ -16,7 +16,7 @@ public class UserBannedEvent extends DomainEvent {
 
     public UserBannedEvent(Object source, Instant occurredAt, EventId identity, Ban ban){
         super(source);
-        this.details = "moderator or admin: " + ban.getIssuer() + " has issued a ban";
+        this.details = "moderator or admin: " + ban.getIssuerName() + " has issued a ban";
         this.occurredAt = occurredAt;
         this.identity = identity;
         this.ban = ban;

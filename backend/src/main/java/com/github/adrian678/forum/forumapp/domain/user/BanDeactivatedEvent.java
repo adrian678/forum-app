@@ -15,7 +15,7 @@ public class BanDeactivatedEvent extends DomainEvent {
 
     public BanDeactivatedEvent(Object source, Instant occurredAt, EventId identity, Ban ban){
         super(source);
-        this.details = "moderator or admin: " + ban.getIssuer() + " has deactivated a ban";
+        this.details = "moderator or admin: " + ban.getIssuerName() + " has deactivated a ban";
         this.occurredAt = occurredAt;
         this.identity = identity;
         this.ban = ban;

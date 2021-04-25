@@ -147,9 +147,9 @@ public class UserController implements ApplicationEventPublisherAware {
         //TODO refactor into factory class
         Ban newBan;
         if(null == requestDto.getEndTime()){
-            newBan = TemporaryBan.createNew(requestDto.getStartTime(), requestDto.getEndTime(), authenticatedUser.getUsername(), requestDto.getBoardName());
+            newBan = new Ban(new DateRange(requestDto.getStartTime(), requestDto.getEndTime()), authenticatedUser.getUsername(), requestDto.getBoardName());
         } else {
-            newBan = PermanentBan.createNew(requestDto.getStartTime(), authenticatedUser.getUsername(), requestDto.getBoardName());
+            newBan = Ban.createPermanent(authenticatedUser.getUsername(), requestDto.getBoardName());
         }
         userToBan.addBan(newBan);
         userRepository.save(userToBan);
@@ -157,21 +157,27 @@ public class UserController implements ApplicationEventPublisherAware {
         return ResponseEntity.ok().body(userModelAssembler.toModel(userToBan));
     }
 
-    @PreAuthorize(Role.HAS_ROLE_BASIC_USER_EXPR)
-    @PostMapping("users/{username}/bans/{banId}/deactivate")
-    public ResponseEntity<?> unbanUser(@PathVariable String username, @PathVariable String banId){
+    @PreAuthorize(Role.HAS_ROLE_ADMIN_EXPR)
+    @DeleteMapping("users/{username}/bans/{banId}/deactivate")
+    public ResponseEntity<?> unbanUser(@PathVariable String username, @PathVariable String banId, @RequestBody BanUserRequestDto dto){
         User userToUnban = userRepository.findByUsername(username).orElseThrow(() ->new UsernameNotFoundException("No such user found"));
         User authenticatedUser = retrieveFullAuthenticatedUser();
-        Ban banToDeactivate = userToUnban.findBanById(UUID.fromString(banId)); //TODO consider exception that may be thrown
-        //check if authenticated user has authority to deactivate ban
-        Board board = boardRepository.findById(banToDeactivate.getBoardName()).orElseThrow(()-> new BoardNotFoundException("No such board"));
-        if(board.hasModeratorByName(authenticatedUser.getUsername()) || authenticatedUser.hasAuthority(Role.ROLE_ADMIN)){
-            banToDeactivate.deactivate();
-            userRepository.save(userToUnban);
-            publisher.publishEvent(new BanDeactivatedEvent(this, Instant.now(), EventId.randomId(), banToDeactivate));
-            return ResponseEntity.ok().body(userModelAssembler.toModel(userToUnban)); //TODO return ban instead?
+        Ban ban = new Ban(new DateRange(dto.getStartTime(), dto.getEndTime()), dto.getIssuerName(), dto.getBoardName());
+        if(userToUnban.removeBan(ban)){
+            publisher.publishEvent(new BanDeactivatedEvent(this, Instant.now(), EventId.randomId(), ban));
+            return ResponseEntity.ok().body(userModelAssembler.toModel(userToUnban));
         }
-        return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Only an admin or moderator of the board can deactivate the ban on this user");
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No corresponding ban found for user");
+//        Ban banToDeactivate = userToUnban.findBanById(UUID.fromString(banId)); //TODO consider exception that may be thrown
+//        //check if authenticated user has authority to deactivate ban
+//        Board board = boardRepository.findById(banToDeactivate.getBoardName()).orElseThrow(()-> new BoardNotFoundException("No such board"));
+//        if(board.hasModeratorByName(authenticatedUser.getUsername()) || authenticatedUser.hasAuthority(Role.ROLE_ADMIN)){
+//            banToDeactivate.deactivate();
+//            userRepository.save(userToUnban);
+//            publisher.publishEvent(new BanDeactivatedEvent(this, Instant.now(), EventId.randomId(), banToDeactivate));
+//            return ResponseEntity.ok().body(userModelAssembler.toModel(userToUnban)); //TODO return ban instead?
+//        }
+//        return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Only an admin or moderator of the board can deactivate the ban on this user");
 
     }
 
