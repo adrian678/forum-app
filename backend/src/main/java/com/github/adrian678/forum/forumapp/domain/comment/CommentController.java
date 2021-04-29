@@ -78,6 +78,7 @@ public class CommentController {
             @RequestParam(defaultValue = "null") String sort) {
         PageRequest request = Utils.createPageRequestFromParams(page, limit, sort);
         Page<Comment> comments = commentRepository.findByParentPostId(PostId.fromString(postId), request);
+        System.out.println("comment page had" + comments.getTotalElements());
         List<CommentResponseDto> dtos = comments.stream().map(commentModelAssembler::toModel).collect(Collectors.toList());
         int previousPage = page - 1;
         int nextPage = page + 1;

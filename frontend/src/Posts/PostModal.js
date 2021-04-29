@@ -7,6 +7,7 @@ import {
   } from "react-router-dom";
   import axios from "axios";
   import "../common/modals.css";
+  import Comment from "../Comments/Comment";
 
   export default function PostModal(props) {
     let history = useHistory();
@@ -40,9 +41,14 @@ import {
         }).catch(e => console.log(e));
         axios.get(`http://localhost:8081/posts/${postId}/comments`)
         .then((response) => {
-            setComments(response.data);
+            setComments(response.data._embedded.commentResponseDtoList);
+            console.log("response");
+            console.log(response);
+            console.log("comments");
             console.log(comments);
-        }).catch(e => console.log(e));
+        })
+        .then(()=>console.log(comments))
+        .catch(e => console.log(e));
     }, []);
 
     return (
@@ -64,11 +70,18 @@ import {
                     {/* <FaRegArrowAltCircleUp onClick={this.incrementPoints}/> */}
                 {/* </div> */}
                 {/* <NewCommentPrompt pid={location.state.pid} user={location.state.user}/> */}
+                {/* {comments.lenth > 0 && comments.map(comment => <p>{comment.content}</p>)} */}
                 {comments.map((comment) => {
                     return(
-                        <div className="comment">
-                            {comment.content}
-                        </div>
+                        <Comment author={comment.author} 
+                        commentId={comment.commentId}
+                        content={comment.content}
+                        parentComment={comment.parentComment}
+                        likedByUser={comment.likedByUser}
+                        savedByUser={comment.savedByUser}
+                        points={comment.points}
+                        createdAt={comment.createdAt}
+                        />
                     );
                 })}
                 {comments.length === 0 && <div>Be the first to discuss the issue!</div>}

@@ -1,11 +1,50 @@
 import React, { useContext, useState } from "react";
 import {Link, Redirect} from "react-router-dom";
 import Navbar from "../common/Navbar";
-import {BsFillPersonFill} from "react-icons/bs";
+import {BsFillPersonFill, BsBookmarkPlus, BsBookmarkFill} from "react-icons/bs";
+import {AiOutlineLike, AiTwotoneLike} from "react-icons/ai";
 import "./Comment.css"
+import "../common/Variables.css"
 
 export default function Comment(props){
 
+    const [isLiked, setIsLiked] = useState(false);
+    const [isSaved, setIsSaved] = useState(false);
+
+    let replyingTo = (commentId) =>(
+        // TODO make the commentId a link
+        <div>
+            replying to {commentId}
+        </div>
+    )
+
+    let likeIcon = ()=>{
+        if(isLiked){
+            return (
+                <AiTwotoneLike/>
+            )
+        }
+        return (
+            <AiOutlineLike/>
+        )
+    }
+
+    let bookmarkIcon = ()=>{
+        if(isLiked){
+            return (
+                <BsBookmarkFill/>
+            )
+        }
+        return (
+            <BsBookmarkPlus/>
+        )
+    }
+
+    // let fetchLikeStatus = ()=>{
+
+    // }
+
+    // TODO send a like POST request
     
 
     return(
@@ -19,6 +58,8 @@ export default function Comment(props){
                     <Link to={"/users/" + props.author}>
                         {props.author}
                     </Link>
+                    {/* TODO convert to a friendlier time format */}
+                    {props.createdAt}
                 </div>
                 {/* The report may require a separate component for itself */}
                 <div className="Comment_report">
@@ -28,9 +69,16 @@ export default function Comment(props){
                     {/* {props.timestamp} TODO add timestamp to comment dto */}
                 </div>
             </div>
-            <div className="Comment_content">
+            <div className="Comment__content">
                 {/* should be indented or padded left */}
+                {props.parentComment && replyingTo(props.parentComment)}
                 {props.content}
+            </div>
+            <div className="Comment__footer">
+                {likeIcon()}
+                {props.points}
+                {bookmarkIcon()}
+
             </div>
             
         </div>

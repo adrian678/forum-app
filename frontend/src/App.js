@@ -15,6 +15,7 @@ function App() {
       user: false,
       token: false,
     }});
+
   let logout = ()=>{
     console.log("logout called");
     setAuth({auth: {
@@ -23,6 +24,7 @@ function App() {
       token: null,
     }});
   };
+
   return (
     <div className="App">
       {/* <header className="App-header">
@@ -39,7 +41,7 @@ function App() {
           Learn React
         </a>
       </header> */}
-      <AuthContext.Provider value={{auth: auth, logout: logout}}>
+      <AuthContext.Provider value={{auth: auth, logout: logout, setAuth: setAuth}}>
         <Router>
           <div id="appContainer">
               <ModalSwitch/>

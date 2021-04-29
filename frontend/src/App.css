@@ -42,7 +42,7 @@
   box-sizing: border-box;
 }
 
-a, a:hover, a:visited, a:active {
+:where(a, a:hover, a:visited, a:active) {
   text-decoration: none;
   color:inherit;
 }

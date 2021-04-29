@@ -1,8 +1,9 @@
 @import "Variables.css"; /*Do I need to import this?*/
 button {
-    box-shadow: 0 0 4px black;
+    /* box-shadow: 0 0 4px black; */
     font-weight: 700;
     border-radius: 8%; /*consider moving this into a button-rounded element*/
+    border: none;
 }
 
 /* colors */
@@ -51,10 +52,54 @@ button {
     color: white;
 }
 
+
+
 .button--black-pink{
     background-color: var(--my-black);
     color: var(--my-pink);
     border: 2px solid var(--my-pink);
+}
+
+.button--ghost-red{
+    background-color: var(--my-red);
+    color: white;
+    border: 2px solid var(white);
+}
+
+.button--ghost-blue{
+    background-color: var(--my-blue);
+    color: white;
+    border: 2px solid var(white);
+}
+
+.button--ghost-green{
+    background-color: var(--my-green);
+    color: white;
+    border: 2px solid var(white);
+}
+
+.button--ghost-aqua{
+    background-color: var(--my-aqua);
+    color: white;
+    border: 2px solid var(white);
+}
+
+.button--ghost-pink{
+    background-color: var(--my-pink);
+    color: white;
+    border: 2px solid var(white);
+}
+
+.button--ghost-yellow{
+    background-color: var(--my-yellow);
+    color: white;
+    border: 2px solid var(white));
+}
+
+.button--ghost-violet{
+    background-color: var(--my-violet);
+    color: white;
+    border: 2px solid var(white);
 }
 /* size */
 .button--small{

@@ -1,31 +1,47 @@
 import React, { useContext, useState } from "react";
 import {Link, Redirect} from "react-router-dom";
+import {FaUserCircle} from 'react-icons/fa'
 
 import {AuthContext} from "../Authentication/AuthContext"
 import "./Button.css"
 import "./Navbar.css"
 export default function Navbar(props){
-    const auth = useContext(AuthContext);
+    const {auth} = useContext(AuthContext);
+
 
     let userSection;
     if(!auth.isAuthenticated){
         userSection = (
             <div>
-                <Link to="/signup">
-                    <button className="button--small button--inv-aqua">
+                <Link to="/signup" className="navbar__item">
+                    <button className="button--small button--ghost-violet">
                         Sign up
                     </button>
                 </Link>
-                <Link  to="/login">
-                    <button className="button--small button--aqua">
+                <Link  to="/login" className="navbar__item ">
+                    <button className="button--small button--ghost-yellow">
                         Login
+                    </button>
+                </Link>
+            </div>
+        );
+    } else {
+        userSection = (
+            <div>
+                <div>
+                    <FaUserCircle size="32"/>
+                    <span style={{fontSize:"1.4em"}}>{auth.user}</span>
+                </div>
+                <Link  to="/login" className="navbar__item ">
+                    <button className="button--small button--ghost-red" onClick={auth.logout}>
+                        Logout
                     </button>
                 </Link>
             </div>
         );
     }
     
-
+    console.log(auth);
 
     return(
         <nav className="navbar navbar-font">
@@ -37,8 +53,9 @@ export default function Navbar(props){
                     
                 </div>
                  */}
+                 {/* experiment on fonts */}
                 <div className="navbar-section">
-                    <Link className=" navbar-item" to="/about">About</Link>
+                    <Link className="navbar__item navbar__about" to="/about">About</Link>
                 </div>
 
                 {userSection}

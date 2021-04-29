@@ -72,4 +72,16 @@ public class CommentResponseDto extends RepresentationModel<CommentResponseDto> 
     public boolean isSavedByUser() {
         return isSavedByUser;
     }
+
+    public CommentId getParentCommentId() {
+        return parentCommentId;
+    }
+
+    public Instant getCreatedAt() {
+        return createdAt;
+    }
+
+    public int getPoints() {
+        return points;
+    }
 }

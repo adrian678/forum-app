@@ -4,7 +4,7 @@
     left: 0;
     right: 0;
     bottom: 0;
-    background-color: rgba(0, 0, 0, 0.25);
+    background-color: rgba(0, 0, 0, 0.65);
 }
 
 .post-modal-inner{
@@ -13,9 +13,9 @@
     left: 10%;
     right: 10%;
     bottom: 5%;
-    border: 2px solid green;
+    /* border: 2px solid green; */
     padding: 1em 2em;
-    background-color: rgba(206, 207, 207, 0.904);
-    border-radius: 2em;
+    background-color: hsla(245, 0%, 80%, 1);
+    border-radius: 3px;
     
 }

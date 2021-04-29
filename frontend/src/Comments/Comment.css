@@ -1,5 +1,6 @@
 .Comment{
-    border: 2px solid green;
+    border: 2px solid var(--my-violet);
+    border-radius: 5px;
 }
 
 .Comment__header{
