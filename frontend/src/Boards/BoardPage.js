@@ -50,7 +50,7 @@ export default function Board(props){
                 {posts.map((post)=>{
                     return(
                         //TODO Need to validate whether post is empty
-                        <Link key={post.postId.uuid} to={{pathname: `/posts/${post.postId.uuid}`, 
+                        <Link style={{margin: "2rem 0px 2rem 0px" }} key={post.postId.uuid} to={{pathname: `/posts/${post.postId.uuid}`, 
                         state: {
                           background : location,
                           pid: post.postId.uuid,
@@ -60,6 +60,7 @@ export default function Board(props){
                         },}}>
                           <PostPreview key={post.postId.uuid} author={post.author} title={post.title} postId={post.postId.uuid}/>
                         </Link>
+                        
                        
                     )
                 })}

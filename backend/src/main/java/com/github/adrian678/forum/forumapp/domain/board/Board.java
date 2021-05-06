@@ -12,6 +12,14 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+/**
+ * The Board class represents a categorized, moderated group to which users can submit content to.
+ *
+ * A board contains a list of privileged users who have access to moderate submissions to the board.
+ * Aside from the moderators, the board also retains an owner.
+ * A board contains a set of rules dictating guidelines for acceptable submissions and comments to the board.
+ *
+ */
 @Document
 public class Board {
 
@@ -26,13 +34,13 @@ public class Board {
     public final Instant createdAt;
     @NonNull
     private String owner;
-
+    @NonNull
     private List<String> moderators;        //TODO consider changing to a Set instead of List
-
+    @NonNull
     private List<String> rules;
-
+    @NonNull
     private List<PostId> pinnedPosts;
-
+    @NonNull
     private boolean removed;
 
     private Board(String topic, String description, String owner, Quantity numSubscribers,
@@ -48,13 +56,22 @@ public class Board {
         this.removed = removed;
     }
 
+    /**
+     * Creates an intance of Board
+     * @param topic A String name for the board with no spaces
+     * @param description A description of the board
+     * @param owner the owner/creator of the board
+     * @param rules A set of rules describing acceptable content and submissions for the board
+     * @return a new instance of Board
+     */
     public static Board createNewBoard(String topic, String description, String owner, List<String> rules){
         return new Board(topic, description, owner, Quantity.of(1), Instant.now(), new ArrayList<String>(), rules, new ArrayList<>(), false);
     }
 
-    public void rename(String newName){
-        topic = newName;
-    }
+    //TODO remove the rename, since the name is the ID
+//    public void rename(String newName){
+//        topic = newName;
+//    }
 
     public List<String > getModerators(){
         return Collections.unmodifiableList(moderators);
@@ -68,44 +85,82 @@ public class Board {
         return topic;
     }
 
+    /**
+     *
+     * @return the description of the board and its content
+     */
     public String getDescription() {
         return description;
     }
 
+    /**
+     *
+     * @return the non-negative number of users subscribed to the board
+     */
     public Quantity getNumSubscribers() {
         return numSubscribers;
     }
 
+    /**
+     *
+     * @return the time instant that the board was created at
+     */
     public Instant getCreatedAt() {
         return createdAt;
     }
 
+    /**
+     *
+     * @return the identity of the board owner
+     */
     public String getOwner() {
         return owner;
     }
 
+    /**
+     *
+     * @return the String list defining acceptable content of the board
+     */
     public List<String> getRules() {
         return rules;
     }
 
+    /**
+     *
+     * @return the list of posts that moderators or the owner have pinned for easier viewing for clients
+     */
     public List<PostId> getPinnedPosts() {
         return pinnedPosts;
     }
 
-    public boolean containsModerator(User user){
-        return moderators.contains(user.getId());
-    }
+    //TODO remove?
+//    public boolean containsModerator(User user){
+//        return moderators.contains(user.getId());
+//    }
 
+    /**
+     *
+     * @return whether the board has been removed
+     */
     public boolean isRemoved() {
         return removed;
     }
 
+    /**
+     *
+     * @param removed
+     */
     public void setRemoved(boolean removed){
         this.removed = removed;
     }
 
+    /**
+     * Add a subscribed user's identity to the list of moderators
+     * @param newModerator A user that has already subscribed to teh board
+     * @return true if the user is successfully added as a moderator or is already a moderator. False otherwise
+     */
     public boolean addModerator(User newModerator){
-        if(containsModerator(newModerator)){
+        if(hasModeratorByName(newModerator.getUsername())){
             return true;
         }
         //check is proposed moderator is subscribed to the board
@@ -116,6 +171,11 @@ public class Board {
         return false;
     }
 
+    /**
+     * Replaces the current board owner with another user already subscribed to the board
+     * @param newOwner
+     * @return
+     */
     public boolean changeOwner(User newOwner){
         //check that owner is subscribed to the board
         if(newOwner.getSubscribedBoards().contains(this)){
@@ -134,10 +194,19 @@ public class Board {
         rules.remove(rule);
     }
 
+    /**
+     * Replaces the set of rules that submissions to the board must follow
+     * @param rules a String list of rules
+     */
     public void replaceRules(List<String> rules){
         this.rules = new ArrayList<>(rules);
     }
 
+    /**
+     * Checks whether a user with the provided usernams is a moderator of the board
+     * @param username the user who may or may not be a moderator
+     * @return true if the given user is a moderator, false otherwise
+     */
     public boolean hasModeratorByName(String username){
         return moderators.contains(username);
     }

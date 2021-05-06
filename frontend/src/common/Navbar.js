@@ -12,7 +12,7 @@ export default function Navbar(props){
     let userSection;
     if(!auth.isAuthenticated){
         userSection = (
-            <div>
+            <div className="navbar-section">
                 <Link to="/signup" className="navbar__item">
                     <button className="button--small button--ghost-violet">
                         Sign up
@@ -27,16 +27,15 @@ export default function Navbar(props){
         );
     } else {
         userSection = (
-            <div>
-                <div>
+            <div className="navbar-section">
                     <FaUserCircle size="32"/>
                     <span style={{fontSize:"1.4em"}}>{auth.user}</span>
-                </div>
-                <Link  to="/login" className="navbar__item ">
-                    <button className="button--small button--ghost-red" onClick={auth.logout}>
-                        Logout
-                    </button>
-                </Link>
+                
+                    <Link  to="/login" className="navbar__item ">
+                        <button className="button--small button--ghost-red" onClick={auth.logout}>
+                            Logout
+                        </button>
+                    </Link>
             </div>
         );
     }

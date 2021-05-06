@@ -29,5 +29,9 @@
     font-size: 1.3em;
     color: var(--my-violet);
     text-decoration: underline var(--my-violet);
-    text-transform: capitalize;
+}
+
+.navbar-section{
+    display: flex;
+    align-items: center;
 }

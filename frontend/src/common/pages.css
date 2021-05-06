@@ -1,7 +1,11 @@
 .page{
-    width: 100vw;
+    width: max(100%, 100vw);
     height: 100vh;
     display: flex;
     flex-direction: column;
     /* justify-content: center; */
+}
+
+.page--violet{
+    background-color: hsl(263, 96%, 36%);
 }

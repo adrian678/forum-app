@@ -4,3 +4,28 @@
     /* height: 100%; */
     /* width: 100%; */
 }
+
+.container--content-center{
+    margin: 0px auto 0;
+    width: max(400px, 70%);
+}
+
+.container--gray-bg{
+    background-color: var(--my-pale-gray);
+}
+
+.conainter--white-bg{
+    background-color: white;
+}
+
+.container--full-width{
+    width: 100%;
+}
+
+.container--70width{
+    width: 70%;
+}
+
+.container--full-height{
+    height: 100%;
+}
