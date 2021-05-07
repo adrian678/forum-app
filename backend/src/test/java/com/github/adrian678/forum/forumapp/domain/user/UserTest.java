@@ -1,16 +1,26 @@
 package com.github.adrian678.forum.forumapp.domain.user;
 
+import com.github.adrian678.forum.forumapp.domain.board.Board;
+import com.github.adrian678.forum.forumapp.domain.comment.Comment;
 import com.github.adrian678.forum.forumapp.domain.comment.CommentId;
 import com.github.adrian678.forum.forumapp.domain.post.Post;
 import com.github.adrian678.forum.forumapp.domain.post.PostId;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class UserTest {
     String validUsername = "username";
     String validPassword = "password";
     String validEmail = "test@test.com";
+    String validBoardName = "boardName";
+    String validBoardDescription = "boardName";
+    String validBoardOwnerName = "owner";
+    List<String> validBoardRules = new ArrayList<String>();
     PostId validPostId = PostId.randomId();
     CommentId validCommentId = CommentId.randomId();
 
@@ -49,10 +59,11 @@ public class UserTest {
             "when saveNewPost is called," +
             "then IllegalArgumentException is thrown")
     public void saveNewPostInvalidPostIdTest(){
-        User user = User.createNewUser(validUsername, validPassword, validEmail);
+        User user = User.createNewUser(validUsername, validPassword,  validEmail);
+        Board board = Board.createNewBoard(validBoardName, validBoardDescription, validBoardOwnerName, validBoardRules);
         Throwable exception = assertThrows(IllegalArgumentException.class, ()-> user.saveNewPost(null));
-
-        exception = assertThrows(IllegalArgumentException.class, ()-> user.saveNewPost(PostId.fromString("1-9fihsaadsad9y")));
+        Post post = Post.createPost(user.getUsername(), validBoardName, "title", "content");
+        exception = assertThrows(IllegalArgumentException.class, ()-> user.saveNewPost(null));
     }
 
     @Test
@@ -62,9 +73,10 @@ public class UserTest {
     public void saveNewPostValidPostIdInputTest(){
         User user = User.createNewUser(validUsername, validPassword, validEmail);
         assert(user.getSavedPosts().size() == 0);
-        user.saveNewPost(validPostId);
+        Post post = Post.createPost(user.getUsername(), validBoardName, "title", "content");
+        user.saveNewPost(post);
         assert (user.getSavedPosts().size() == 1);
-        assert(user.getSavedPosts().contains(validPostId));
+        assert(user.getSavedPosts().contains(post.getpId()));
     }
 
 //    @Test
@@ -80,9 +92,10 @@ public class UserTest {
             "then PostId is removed from savedPosts list")
     public void removeSavedPostValidPostIdTest(){
         User user = User.createNewUser(validUsername, validPassword, validEmail);
-        user.saveNewPost(validPostId);
+        Post post = Post.createPost(user.getUsername(), validBoardName, "title", "content");
+        user.saveNewPost(post);
         assert (user.getSavedPosts().size() == 1);
-        user.removeSavedPost(validPostId);
+        user.removeSavedPost(post);
         assert (user.getSavedPosts().size() == 0);
     }
 
@@ -93,10 +106,12 @@ public class UserTest {
     public void saveNewCommentValidCommentIdTest(){
         //TODO update by having business logic use a Comment object instead of CommentId
         User user = User.createNewUser(validUsername, validPassword, validEmail);
+        Post post = Post.createPost(user.getUsername(), validBoardName, "title", "content");
+        Comment comment = Comment.create(post, null, user, "content");
         assert(user.getSavedComments().size() == 0);
-        user.saveNewComment(validCommentId);
+        user.saveNewComment(comment);
         assert (user.getSavedComments().size() == 1);
-        assert(user.getSavedComments().contains(validCommentId));
+        assert(user.getSavedComments().contains(comment.getCid()));
     }
 
     //do not need to test removeComment since it thinly wraps the removeComment method of ArrayList
@@ -107,9 +122,11 @@ public class UserTest {
             "then CommentId is removed from savedComments list")
     public void removeSavedCommentValidCommentIdMemberTest(){
         User user = User.createNewUser(validUsername, validPassword, validEmail);
-        user.saveNewComment(validCommentId);
+        Post post = Post.createPost(user.getUsername(), validBoardName, "title", "content");
+        Comment comment = Comment.create(post, null, user, "content");
+        user.saveNewComment(comment);
         assert (user.getSavedComments().size() == 1);
-        user.removeSavedComment(validCommentId);
+        user.removeSavedComment(comment);
         assert (user.getSavedComments().size() == 0);
     }
 
@@ -170,10 +187,57 @@ public class UserTest {
 //    TODO change the parameter from using a String to using a Board object
     public void addSubscriptionValidBoardNameTest(){
         User user = User.createNewUser(validUsername, validPassword, validEmail);
-        String boardName = "boardName";
-        user.addSubscription(boardName);
-        assert(user.hasSubscribedTo(boardName));
+        User subScribedUser = User.createNewUser("subScribedUser", validPassword, validEmail);
+        Board board = Board.createNewBoard(validBoardName, validBoardDescription, "owner", validBoardRules);
+        subScribedUser.addSubscription(board);
+        assert(subScribedUser.hasSubscribedTo(board));
 
     }
+
+//    TODO do tests for:
+    @Test
+    @DisplayName("Given a valid boardName that the user is banned from" +
+            "When isBannedFromBoard is called" +
+            "then true is returned")
+    public void isBannedFromBoardValidBoardNameTest(){
+        User owner = User.createNewUser(validUsername, validPassword, validEmail);
+        User bannedUser = User.createNewUser("bannedUser", validPassword, validEmail);
+        String boardName = "boardName";
+        String boardDescription = "description";
+        List<String> boardRules = new ArrayList<String>();
+        boardRules.add("one rule");
+        Board board = Board.createNewBoard(boardName, boardDescription, owner.getUsername(), boardRules);
+        Ban ban = Ban.createPermanent(owner.getUsername(), board);
+        bannedUser.addBan(ban);
+        System.out.print(ban);      //ban is lazy loaded/garbage collected without this line?
+        assert(bannedUser.isBannedFromBoard(board));
+    }
+
+    @Test
+    @DisplayName("Given a valid boardName that the user is not banned from" +
+            "When isBannedFromBoard is called" +
+            "then false is returned")
+    public void isNotBannedFromBoardValidBoardNameTest(){
+        User owner = User.createNewUser(validUsername, validPassword, validEmail);
+        User bannedUser = User.createNewUser("bannedUser", validPassword, validEmail);
+        String boardName = "boardName";
+        String boardDescription = "description";
+        List<String> boardRules = new ArrayList<String>();
+        boardRules.add("one rule");
+        Board board = Board.createNewBoard(boardName, boardDescription, owner.getUsername(), boardRules);
+        Ban ban = Ban.createPermanent(owner.getUsername(), board);
+//        bannedUser.addBan(ban);
+        System.out.print(ban);      //ban is lazy loaded/garbage collected without this line?
+        assert(!bannedUser.isBannedFromBoard(board));
+    }
+//isBannedFromBoard(String boardName)
+    //addBan
+    //removeBan
+    //getBans
+    //addSubscription
+    //hasSubscribedTo
+    //hasFollowedUser
+    //hasBLockedUser
+    //
 
 }

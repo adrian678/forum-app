@@ -1,7 +1,5 @@
 package com.github.adrian678.forum.forumapp.domain.post;
 
-import com.github.adrian678.forum.forumapp.domain.user.User;
-import com.github.adrian678.forum.forumapp.domain.user.UserId;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -11,9 +9,16 @@ import java.time.Instant;
 
 import static com.github.adrian678.forum.forumapp.domain.Utils.containsWhiteSpace;
 
-//import java.util.Date;
 
-
+/**
+ * Post represents a typical submission by a user to a board, containing text.
+ *
+ * <P>
+ *     Contains references to the author of the post, the board that it has been submitted to, a String corresponding to the content of the post,
+ *     a String title, an integer point count, an Instant timestamp, and booleans corresponding to archive status and removal status.
+ * </P>
+ *
+ */
 @Document
 public class Post {
     @Id
@@ -48,6 +53,14 @@ public class Post {
         this.isRemoved = false;
     }
 
+    /**
+     *
+     * @param author the User object corresponding to the author that created this post
+     * @param boardName the indentification of the board which this post is attached to.
+     * @param title the String title of the post
+     * @param content the String representing the content of the post
+     * @return an instance of Post
+     */
     public static Post createPost(String author, String boardName, String title, String content){
         //TODO should these use domain objects instead of Strings/ids
         if(null == author){
@@ -63,55 +76,107 @@ public class Post {
         return new Post(PostId.randomId(), author, boardName, 1, title, content, Instant.now(), false);
     }
 
+    /**
+     *
+     * @return the identification of this post
+     */
     public PostId getpId() {
         return pId;
     }
 
+    /**
+     *
+     * @return the identity of the author of this post
+     */
     public String getAuthor() {
         return author;
     }
 
+    /**
+     *
+     * @return the identity of the board name of this post
+     */
     public String getBoardName(){
         return boardName;
     }
 
+    /**
+     *
+     * @return the content of this post
+     */
     public String getContent() {
         return content;
     }
 
+    /**
+     *
+     * @return the integer point count of this post
+     */
     public int getPoints() {
         return points;
     }
 
+    /**
+     *
+     * @return the Instant creation timestamp of this post
+     */
     public Instant getCreatedAt() {
         return createdAt;
     }
 
+    /**
+     *
+     * @return whether this post is removed
+     */
     public boolean isRemoved() {
         return isRemoved;
     }
 
+    /**
+     *
+     * @return whether this post is archived
+     */
     public boolean isArchived() {
         return archived;
     }
 
+    /**
+     *
+     * @return the title of this post
+     */
     public String getTitle() {
         return title;
     }
 
+    /**
+     *
+     * @return the creation timestamp of this post
+     */
     public Instant createdAt() {
         return createdAt;
     }
 
+    //TODO consider editing a post use case
+    /**
+     *
+     * @param title
+     */
     public void editTitle(String title) {
         this.title = title;
     }
 
+    /**
+     * Archives the post so that no edits or new comments may be applied to it.
+     */
     public void archive(){
 //        TODO should there be a method to 'unarchive' a Post?
         this.archived = true;
     }
 
+    /**
+     *
+     * @param removed whether the post has been removed.
+     */
     public void setRemoved(boolean removed) {
         isRemoved = removed;
     }

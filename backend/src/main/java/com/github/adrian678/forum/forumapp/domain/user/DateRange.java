@@ -63,4 +63,9 @@ public class DateRange implements Comparable<DateRange> {
     public int hashCode() {
         return Objects.hash(start, end);
     }
+
+    @Override
+    public String toString() {
+        return "starts at: " + start + " ends at: " + end;
+    }
 }

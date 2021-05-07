@@ -1,7 +1,6 @@
 package com.github.adrian678.forum.forumapp.domain.board;
 
 import com.github.adrian678.forum.forumapp.domain.post.PostId;
-import com.github.adrian678.forum.forumapp.domain.user.UserId;
 import org.springframework.hateoas.RepresentationModel;
 
 import java.util.Collections;
@@ -28,7 +27,7 @@ public class BoardResponseDto extends RepresentationModel<BoardResponseDto> {
     }
 
     public static BoardResponseDto fromBoard(Board board){
-        return new BoardResponseDto(board.getTopic(), board.getDescription(), board.getOwner(),
+        return new BoardResponseDto(board.getName(), board.getDescription(), board.getOwner(),
                 board.getRules(), board.getNumSubscribers(), board.getModerators(), board.getPinnedPosts());
     }
 

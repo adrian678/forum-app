@@ -1,8 +1,8 @@
 package com.github.adrian678.forum.forumapp.domain.board;
 
+import com.github.adrian678.forum.forumapp.domain.post.Post;
 import com.github.adrian678.forum.forumapp.domain.post.PostId;
 import com.github.adrian678.forum.forumapp.domain.user.User;
-import com.github.adrian678.forum.forumapp.domain.user.UserId;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.lang.NonNull;
@@ -25,7 +25,7 @@ public class Board {
 
     @Id
     @NonNull //TODO is adding NonNull after ID redundant?
-    public String topic;
+    public String name;
     @NonNull
     private final String description;
     @NonNull
@@ -43,9 +43,9 @@ public class Board {
     @NonNull
     private boolean removed;
 
-    private Board(String topic, String description, String owner, Quantity numSubscribers,
-                    Instant createdAt, List<String> moderators, List<String > rules, List<PostId> pinnedPosts, boolean removed){
-        this.topic = topic;
+    private Board(String name, String description, String owner, Quantity numSubscribers,
+                  Instant createdAt, List<String> moderators, List<String > rules, List<PostId> pinnedPosts, boolean removed){
+        this.name = name;
         this.description = description;
         this.owner = owner;
         this.numSubscribers = numSubscribers;
@@ -66,23 +66,24 @@ public class Board {
      */
     public static Board createNewBoard(String topic, String description, String owner, List<String> rules){
         return new Board(topic, description, owner, Quantity.of(1), Instant.now(), new ArrayList<String>(), rules, new ArrayList<>(), false);
+        //TODO replae String owner with User owner?
     }
 
     //TODO remove the rename, since the name is the ID
 //    public void rename(String newName){
-//        topic = newName;
+//        name = newName;
 //    }
 
     public List<String > getModerators(){
         return Collections.unmodifiableList(moderators);
     }
 
-    public void addPinnedPost(PostId postId){
-        pinnedPosts.add(postId);
+    public boolean addPinnedPost(Post post){
+        return pinnedPosts.add(post.getpId());
     }
 
-    public String getTopic() {
-        return topic;
+    public String getName() {
+        return name;
     }
 
     /**
@@ -160,13 +161,18 @@ public class Board {
      * @return true if the user is successfully added as a moderator or is already a moderator. False otherwise
      */
     public boolean addModerator(User newModerator){
+        if(removed){
+            throw new BoardRemovedException("attempted modification of removed board in addModerator call");
+        }
+        if(null == newModerator){
+            throw new IllegalArgumentException("Null reference provided to addModerator call");
+        }
         if(hasModeratorByName(newModerator.getUsername())){
             return true;
         }
         //check is proposed moderator is subscribed to the board
-        if(newModerator.getSubscribedBoards().contains(this)){
-            moderators.add(newModerator.getUsername());
-            return true;
+        if(newModerator.hasSubscribedTo(this)){
+            return moderators.add(newModerator.getUsername());
         }
         return false;
     }
@@ -177,8 +183,14 @@ public class Board {
      * @return
      */
     public boolean changeOwner(User newOwner){
+        if(removed){
+            throw new BoardRemovedException("attempted modification of removed board in addModerator call");
+        }
+        if(null == newOwner){
+            throw new IllegalArgumentException("Null reference provided as arg to changeOwner");
+        }
         //check that owner is subscribed to the board
-        if(newOwner.getSubscribedBoards().contains(this)){
+        if(newOwner.hasSubscribedTo(this)){
             owner = newOwner.getUsername();
             return true;
         }
@@ -209,5 +221,14 @@ public class Board {
      */
     public boolean hasModeratorByName(String username){
         return moderators.contains(username);
+    }
+
+    /**
+     * Checks whether a user is a moderator of the board
+     * @param user the user who may or may not be a moderator
+     * @return true if the given user is a moderator, false otherwise
+     */
+    public boolean hasModerator(User user){
+        return moderators.contains(user.getUsername());
     }
 }

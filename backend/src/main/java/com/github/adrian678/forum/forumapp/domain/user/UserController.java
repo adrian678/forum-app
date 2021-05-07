@@ -144,12 +144,13 @@ public class UserController implements ApplicationEventPublisherAware {
 
         User userToBan = userRepository.findByUsername(requestDto.getBannedUser()).orElseThrow(() ->new UsernameNotFoundException("No such user found"));
         User authenticatedUser = retrieveFullAuthenticatedUser();
+        Board board = boardRepository.findById(requestDto.getBoardName()).orElseThrow(()->new IllegalArgumentException("no such board"));
         //TODO refactor into factory class
         Ban newBan;
         if(null == requestDto.getEndTime()){
-            newBan = new Ban(new DateRange(requestDto.getStartTime(), requestDto.getEndTime()), authenticatedUser.getUsername(), requestDto.getBoardName());
+            newBan = new Ban(new DateRange(requestDto.getStartTime(), requestDto.getEndTime()), authenticatedUser.getUsername(), board);
         } else {
-            newBan = Ban.createPermanent(authenticatedUser.getUsername(), requestDto.getBoardName());
+            newBan = Ban.createPermanent(authenticatedUser.getUsername(), board);
         }
         userToBan.addBan(newBan);
         userRepository.save(userToBan);
@@ -162,7 +163,8 @@ public class UserController implements ApplicationEventPublisherAware {
     public ResponseEntity<?> unbanUser(@PathVariable String username, @PathVariable String banId, @RequestBody BanUserRequestDto dto){
         User userToUnban = userRepository.findByUsername(username).orElseThrow(() ->new UsernameNotFoundException("No such user found"));
         User authenticatedUser = retrieveFullAuthenticatedUser();
-        Ban ban = new Ban(new DateRange(dto.getStartTime(), dto.getEndTime()), dto.getIssuerName(), dto.getBoardName());
+        Board board = boardRepository.findById(dto.getBoardName()).orElseThrow(()->new IllegalArgumentException("no such board"));
+        Ban ban = new Ban(new DateRange(dto.getStartTime(), dto.getEndTime()), dto.getIssuerName(), board);
         if(userToUnban.removeBan(ban)){
             publisher.publishEvent(new BanDeactivatedEvent(this, Instant.now(), EventId.randomId(), ban));
             return ResponseEntity.ok().body(userModelAssembler.toModel(userToUnban));
@@ -196,16 +198,10 @@ public class UserController implements ApplicationEventPublisherAware {
 
     @PreAuthorize(Role.HAS_ROLE_BASIC_USER_EXPR)
     @PostMapping("/me/subscriptions")
-    public ResponseEntity<?> subscribe(@RequestParam String boardName){ //TODO Spring tries to convert json request body into User instead fromString UserDto
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if(null == authentication){
-            //TODO check if possible to reach here despite SecurityConfig restrictions
-        }
-        //Check that board exists
+    public ResponseEntity<?> subscribe(@RequestBody String boardName){
         Board board = boardRepository.findById(boardName).orElseThrow(() -> new BoardNotFoundException("No such board exists"));
-        //TODO check if the object returnd by default DaoAuthentication is a User object
-        User authenticatedUser = (User) userService.loadUserByUsername(authentication.getName());
-        authenticatedUser.addSubscription(boardName);
+        User authenticatedUser = retrieveFullAuthenticatedUser();
+        authenticatedUser.addSubscription(board);
         return ResponseEntity.ok(userModelAssembler.toModel(userRepository.save(authenticatedUser)));
         //TODO need to increase the subscriber count of the board too
     }

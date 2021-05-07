@@ -1,7 +1,6 @@
 package com.github.adrian678.forum.forumapp.domain.board;
 
 import org.springframework.hateoas.CollectionModel;
-import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.server.RepresentationModelAssembler;
 import org.springframework.stereotype.Component;
 
@@ -20,7 +19,7 @@ public class BoardModelAssembler implements RepresentationModelAssembler<Board, 
     @Override
     public BoardResponseDto toModel(Board board) {
         return BoardResponseDto.fromBoard(board)
-                .add( linkTo(methodOn(BoardController.class).one(board.getTopic())).withSelfRel(),
+                .add( linkTo(methodOn(BoardController.class).one(board.getName())).withSelfRel(),
                 linkTo(methodOn(BoardController.class).all()).withRel("boards"));
     }
 

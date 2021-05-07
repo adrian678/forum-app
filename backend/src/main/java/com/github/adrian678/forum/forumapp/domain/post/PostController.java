@@ -144,7 +144,8 @@ public class PostController {
     @PostMapping("/posts")
     public ResponseEntity<?> create(@RequestBody PostCreationRequestDto dto){
         User author = retrieveFullAuthenticatedUser();
-        if(author.isBannedFromBoard(dto.getBoardName())){
+        Board board = boardRepository.findById(dto.getBoardName()).orElseThrow(()->new IllegalArgumentException("no such board exists"));
+        if(author.isBannedFromBoard(board)){
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body("User is currently banned from this board");
         }
         Post newPost = Post.createPost(author.getUsername(),dto.getBoardName(), dto.getTitle(), dto.getContent());

@@ -16,7 +16,7 @@ public class BoardDeletedEvent extends DomainEvent {
 
     public BoardDeletedEvent(Object source, Instant occurredAt, EventId identity,Board board, User admin){
         super(source);
-        this.details = "board: \'" + board.getTopic() + "\' created";
+        this.details = "board: \'" + board.getName() + "\' created";
         this.occurredAt = occurredAt;
         this.identity = identity;
         this.board = board;

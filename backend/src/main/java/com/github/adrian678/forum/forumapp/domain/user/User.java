@@ -1,7 +1,11 @@
 package com.github.adrian678.forum.forumapp.domain.user;
 
+import com.github.adrian678.forum.forumapp.domain.board.Board;
+import com.github.adrian678.forum.forumapp.domain.comment.Comment;
 import com.github.adrian678.forum.forumapp.domain.comment.CommentId;
+import com.github.adrian678.forum.forumapp.domain.post.Post;
 import com.github.adrian678.forum.forumapp.domain.post.PostId;
+import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.PersistenceConstructor;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.lang.NonNull;
@@ -15,10 +19,13 @@ import java.util.stream.Collectors;
 
 import static com.github.adrian678.forum.forumapp.domain.Utils.containsWhiteSpace;
 
+/**
+ * User class
+ */
 @Document
 public class User implements UserDetails {
 
-
+    @Id
     @NonNull
     private UserId uid;
     @NonNull
@@ -81,6 +88,13 @@ public class User implements UserDetails {
         this.bans = new ArrayList<>(bans);
     }
 
+    /**
+     *
+     * @param username the username for the newly created instance
+     * @param password the password for the User object
+     * @param email the email of the User object
+     * @return an instance of User
+     */
     public static User createNewUser(String username, String password, String email){
         //TODO create validation methods for provided arguments
         if(null == username || containsWhiteSpace(username) || username.isEmpty()){
@@ -95,95 +109,160 @@ public class User implements UserDetails {
                 new ArrayList<CommentId>(), new ArrayList<UserId>(), new ArrayList<String>(), new ArrayList<String>(), new ArrayList<String>(), new ArrayList<>());
     }
 
+    /**
+     *
+     * @return a colletion of Spring API GrantedAuthority objects
+     */
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         //TODO check if this populates the authorities field in the object returned by the UserController
         return authorities.stream().map(SimpleGrantedAuthority::new).collect(Collectors.toList());
     }
 
-
+    /**
+     *
+     * @return a user identification
+     */
     public UserId getId() {
         return uid;
     }
 
+    /**
+     *
+     * @return the username
+     */
     @Override
     public String getUsername() {
         return username;
     }
 
+    /**
+     *
+     * @return the hashed password
+     */
     @Override
     public String getPassword() {
         return password;
     }
 
+    /**
+     *
+     * @return the separate user identifier
+     */
     public UserId getUid() {
         return uid;
     }
 
+    /**
+     *
+     * @return the email of the user
+     */
     public String getEmail() {
         return email;
     }
 
+    /**
+     *
+     * @return the instance this object was created At
+     */
     public Instant getCreatedOn() {
         return createdOn;
     }
 
+    /**
+     *
+     * @return a list of comments this User instance has saved
+     */
     public List<CommentId> getSavedComments() {
         return savedComments;
     }
 
+    /**
+     *
+     * @return a list of user identifiers that this user has blocked
+     */
     public List<UserId> getBlockedUsers() {
         return blockedUsers;
     }
 
+    /**
+     *
+     * @return a list of identifiers for boards that this user has subscribed to
+     */
     public List<String> getSubscribedBoards() {
         return subscribedBoards;
     }
 
+    /**
+     *
+     * @return true if the user is active
+     */
     public boolean isActive(){
         return isActive;
     }
 
+    /**
+     *
+     * @return true if account is not expired
+     */
     @Override
     public boolean isAccountNonExpired() {
         return isAccountNonExpired;
     }
 
+    /**
+     *
+     * @return true if account is not ocked
+     */
     @Override
     public boolean isAccountNonLocked() {
         return isAccountNonLocked;
     }
 
+    /**
+     *
+     * @return true if credentials are not expired
+     */
     @Override
     public boolean isCredentialsNonExpired() {
         return isCredentialsNonExpired;
     }
 
+    /**
+     *
+     * @return true if user is enabled
+     */
     @Override
     public boolean isEnabled() {
         return isEnabled;
     }
 
     //TODO should the save/Remove Post and save/remove Comment methods take the whold domain object (Post/Comment) as arg or just ID?
-    public void saveNewPost(PostId postId){
-        if(null == postId){
+    public void saveNewPost(Post post){
+        if(null == post){
             throw new IllegalArgumentException("null reference provided to saveNewPost call");
         }
-        savedPosts.add(postId);
+        savedPosts.add(post.getpId());
     }
 
-    public void removeSavedPost(PostId postId){
-        savedPosts.remove(postId);
+    public void removeSavedPost(Post post){
+        savedPosts.remove(post.getpId());
     }
 
-    public void saveNewComment(CommentId commentId){
-        savedComments.add(commentId);
+    public void saveNewComment(Comment comment){
+        savedComments.add(comment.getCid());
     }
 
-    public void removeSavedComment(CommentId commentId){
-        savedComments.remove(commentId);
+    public void removeSavedComment(Comment comment){
+        savedComments.remove(comment.getCid());
     }
 
+    /**
+     *
+     * @param userToBlock the offending user that should be blocked
+     * @return true if the user is successfully blocked
+     * @throws IllegalArgumentException if provided with null user, or if user attempts ot block his/hersef
+     */
     public boolean blockUser(User userToBlock){
         if(null == userToBlock){
             throw new IllegalArgumentException("null reference provided to block User call");
@@ -195,11 +274,20 @@ public class User implements UserDetails {
         return blockedUsers.add(userToBlock.getId());
     }
 
-    //TODO change to use String usernames instead of UserId
+    /**
+     *
+     * @param user that may have been blocked
+     * @return true if the given user has been blocked by this user
+     */
     public boolean hasBlockedUser(User user){
         return blockedUsers.contains(user.getUid());
     }
 
+    /**
+     *
+     * @param user to follow
+     * @return true if the user has been successfully followed
+     */
     public boolean followUser(User user){
         if(null == user){
             throw new IllegalArgumentException("null reference provided to followUser call");
@@ -211,6 +299,11 @@ public class User implements UserDetails {
         return followedUsers.add(user.getUsername());
     }
 
+    /**
+     *
+     * @param user a User which this object may be following
+     * @return true if the user is followed, false otherwise
+     */
     public boolean hasFollowedUser(User user){
         if(null == user){
             throw new IllegalArgumentException("Null reference provided to hasFollowedUser method");
@@ -219,18 +312,19 @@ public class User implements UserDetails {
     }
 
 
-    public boolean addSubscription(String boardName){
-        if(boardName == null){
+    public boolean addSubscription(Board board){
+
+        if(board == null){
             throw new IllegalArgumentException("null reference provided to addSubscription cal");
         }
-        return subscribedBoards.add(boardName);
+        return subscribedBoards.add(board.getName());
     }
 
-    public boolean hasSubscribedTo(String boardName){
-        if(null == boardName){
+    public boolean hasSubscribedTo(Board board){
+        if(null == board){
             throw new IllegalArgumentException("null reference provided to hasSubscribedTo method");
         }
-        return subscribedBoards.contains(boardName);
+        return subscribedBoards.contains(board.getName());
     }
 
     public List<PostId> getSavedPosts() {
@@ -271,20 +365,23 @@ public class User implements UserDetails {
         return bans.remove(ban);
     }
 
-
-    public boolean isBannedFromBoard(String boardName){
-        for(Ban ban : bans){
-            if(ban.isActive()){
-                return true;
-            }
-        }
-        return false;
-//        return !bans.stream().filter(ban->ban.isActive() && ban.getBoardName().equals(boardName)).collect(Collectors.toList()).isEmpty();
+    /**
+     *
+     * @param board the name of a partiular board
+     * @return true is the user has an active ban from the specified board
+     */
+    public boolean isBannedFromBoard(Board board){
+        String boardName = board.getName();
+//        for(Ban ban : bans){
+//            if(ban.boardName.equals(boardName) && ban.isActive()){
+//                return true;
+//            }
+//        }
+//        return false;
+        return !bans.stream().filter(ban->ban.isActive() && ban.getBoardName().equals(boardName)).collect(Collectors.toList()).isEmpty();
     }
 
-//    public Ban findBanById(UUID uuid){
-//        return bans.stream().filter(ban->ban.getUuid().equals(uuid)).findFirst().get();
-//    }
+
 
 
 }

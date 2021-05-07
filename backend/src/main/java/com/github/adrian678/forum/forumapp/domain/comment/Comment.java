@@ -3,13 +3,18 @@ package com.github.adrian678.forum.forumapp.domain.comment;
 import com.github.adrian678.forum.forumapp.domain.post.Post;
 import com.github.adrian678.forum.forumapp.domain.post.PostId;
 import com.github.adrian678.forum.forumapp.domain.user.User;
-import com.github.adrian678.forum.forumapp.domain.user.UserId;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.lang.NonNull;
 
 import java.time.Instant;
 
+/**
+ * This class represents Comment which must correspond to a board and post
+ * <p>
+ *     object containing a String message, a reference to the author id, a timestamp, a reference to the corresponding board, and an integer point count.
+ * </p>
+ */
 @Document
 public class Comment {
 
@@ -46,6 +51,14 @@ public class Comment {
         this.removed = removed;
     }
 
+    /**
+     *
+     * @param post The post to which this comment is anchored
+     * @param parentComment nonnull reference ff this comment is in reply to another comment
+     * @param author The user who has created the comment
+     * @param content The String message contained in the comment
+     * @return a new instance of <code>Comment</code>
+     */
     public static Comment create(Post post, CommentId parentComment, User author, String content){
         if(null == post){
             throw new IllegalArgumentException("null reference provided as post argument to Comment.create()");
@@ -57,46 +70,87 @@ public class Comment {
                 content, Instant.now(), 1, post.getBoardName(), false);
     }
 
+    /**
+     *
+     * @return the identification of the post to which this comment is attached/related
+     */
     public PostId getParentPostId(){
         return parentPostId;
     }
 
+    /**
+     *
+     * @return the identification for this specific comment
+     */
     public CommentId getCid(){
         return cid;
     }
 
+    /**
+     *
+     * @return the identification of the other comment which this comment is replying to
+     */
     public CommentId getParentCommentId(){
         return parentCommentId;
     }
 
+    /**
+     *
+     * @return the identification of the author of this comment
+     */
     public String getAuthor() {
         return author;
     }
 
+    /**
+     *
+     * @return the String message which this comment contains
+     */
     public String getContent() {
         return content;
     }
 
-    public void editContent(String content) {
-        this.content = content;
-    }
+//TODO consider use case
+//    public void editContent(String content) {
+//        this.content = content;
+//    }
 
+    /**
+     *
+     * @return the time instant which this comment was created at
+     */
     public Instant createdAt() {
         return createdAt;
     }
 
+    /**
+     *
+     * @return the integer point count of this comment
+     */
     public int getPoints() {
         return points;
     }
 
+    /**
+     *
+     * @return the identification of the board which the parent post is tied to
+     */
     public String getBoardName() {
         return boardName;
     }
 
+    /**
+     *
+     * @return boolean indicating whether the comment has been removed
+     */
     public boolean isRemoved() {
         return removed;
     }
 
+    /**
+     *
+     * @param removed the new boolean state indicating whether this comment has been removed
+     */
     public void setRemoved(boolean removed) {
         this.removed = removed;
     }

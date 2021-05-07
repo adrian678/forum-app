@@ -15,7 +15,7 @@ public class BoardCreatedEvent extends DomainEvent {
 
     public BoardCreatedEvent(Object source, Instant occurredAt, EventId identity,Board board){
         super(source);
-        this.details = "board: \'" + board.getTopic() + "\' created";
+        this.details = "board: \'" + board.getName() + "\' created";
         this.occurredAt = occurredAt;
         this.identity = identity;
         this.board = board;

@@ -16,7 +16,7 @@ public class BoardOwnerChangedEvent extends DomainEvent {
 
     public BoardOwnerChangedEvent(Object source, Instant occurredAt, EventId identity,Board board, User newOwner){
         super(source);
-        this.details = "moderator \'" + newOwner.getUsername() + "\' added to board: \'" + board.getTopic();
+        this.details = "moderator \'" + newOwner.getUsername() + "\' added to board: \'" + board.getName();
         this.occurredAt = occurredAt;
         this.identity = identity;
         this.board = board;

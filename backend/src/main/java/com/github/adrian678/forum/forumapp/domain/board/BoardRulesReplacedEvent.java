@@ -17,7 +17,7 @@ public class BoardRulesReplacedEvent extends DomainEvent {
 
     public BoardRulesReplacedEvent(Object source, Instant occurredAt, EventId identity, Board board, List<String> rules){
         super(source);
-        this.details = "rule removed from to board: \'" + board.getTopic();
+        this.details = "rule removed from to board: \'" + board.getName();
         this.occurredAt = occurredAt;
         this.identity = identity;
         this.board = board;

@@ -16,7 +16,7 @@ public class BoardModeratorAddedEvent extends DomainEvent {
 
     public BoardModeratorAddedEvent(Object source, Instant occurredAt, EventId identity,Board board, User newModerator){
         super(source);
-        this.details = "moderator \'" + newModerator.getId() + "\' added to board: \'" + board.getTopic();
+        this.details = "moderator \'" + newModerator.getId() + "\' added to board: \'" + board.getName();
         this.occurredAt = occurredAt;
         this.identity = identity;
         this.board = board;

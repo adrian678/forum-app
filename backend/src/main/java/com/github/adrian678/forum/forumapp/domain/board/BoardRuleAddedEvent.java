@@ -16,7 +16,7 @@ public class BoardRuleAddedEvent extends DomainEvent {
 
     public BoardRuleAddedEvent(Object source, Instant occurredAt, EventId identity,Board board, String rule){
         super(source);
-        this.details = "new rule added to board: \'" + board.getTopic();
+        this.details = "new rule added to board: \'" + board.getName();
         this.occurredAt = occurredAt;
         this.identity = identity;
         this.board = board;
